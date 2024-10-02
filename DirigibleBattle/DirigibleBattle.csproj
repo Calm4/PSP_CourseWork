@@ -68,6 +68,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ClientWindow.xaml.cs">
+      <DependentUpon>ClientWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ConnectionWindow.xaml.cs">
+      <DependentUpon>ConnectionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ServerWindow.xaml.cs">
+      <DependentUpon>ServerWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="ClientWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ConnectionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -80,6 +97,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ServerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -123,6 +144,10 @@
     <ProjectReference Include="..\GameLibrary\GameLibrary.csproj">
       <Project>{5eacfb5d-ece4-45e4-be83-6c77d5c94f41}</Project>
       <Name>GameLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Network\Network.csproj">
+      <Project>{C201363F-DA75-4024-BDD3-AB1D8A6897E3}</Project>
+      <Name>Network</Name>
     </ProjectReference>
     <ProjectReference Include="..\PrizesLibrary\PrizesLibrary.csproj">
       <Project>{93152563-4458-4363-b59e-58e874a7d5b9}</Project>
