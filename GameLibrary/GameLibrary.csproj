@@ -34,6 +34,9 @@
     <Reference Include="GLWpfControl, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.GLWpfControl.3.3.0\lib\net452\GLWpfControl.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.3.3.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.3.3\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -60,6 +63,9 @@
     <Compile Include="DirigibleDecorators\SpeedBoostDecorator.cs" />
     <Compile Include="Dirigible\AbstractDirigible.cs" />
     <Compile Include="Dirigible\BasicDirigible.cs" />
+    <Compile Include="Dirigible\DirigibleState.cs" />
+    <Compile Include="Dirigible\DirigibleAction.cs" />
+    <Compile Include="Dirigible\DirigibleActionType.cs" />
     <Compile Include="ObjectRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

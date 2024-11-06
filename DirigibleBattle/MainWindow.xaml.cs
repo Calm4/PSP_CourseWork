@@ -13,7 +13,12 @@ using GameLibrary.DirigibleDecorators;
 using GameLibrary.Dirigible;
 using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
-
+using System.Threading.Tasks;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
+using System.Threading;
+using Newtonsoft.Json;
 
 
 namespace DirigibleBattle
@@ -171,16 +176,6 @@ namespace DirigibleBattle
                 OpenTK.Input.Key.D,
             };
         /// <summary>
-        /// Список кнопок для второго игрока
-        /// </summary>
-        readonly List<OpenTK.Input.Key> secondPlayerInput = new List<OpenTK.Input.Key>()
-            {
-                OpenTK.Input.Key.Up,
-                OpenTK.Input.Key.Down,
-                OpenTK.Input.Key.Left,
-                OpenTK.Input.Key.Right,
-            };
-        /// <summary>
         /// Список кнопок для стрельбы первого игрока
         /// </summary>
         readonly List<OpenTK.Input.Key> firstPlayerFire = new List<OpenTK.Input.Key>()
@@ -189,28 +184,108 @@ namespace DirigibleBattle
             OpenTK.Input.Key.X,
             OpenTK.Input.Key.C,
         };
+
+        /// <summary>
+        /// Список кнопок для второго игрока
+        /// </summary>
+        /*readonly List<OpenTK.Input.Key> secondPlayerInput = new List<OpenTK.Input.Key>()
+            {
+                OpenTK.Input.Key.Up,
+                OpenTK.Input.Key.Down,
+                OpenTK.Input.Key.Left,
+                OpenTK.Input.Key.Right,
+            };*/
         /// <summary>
         /// Список кнопок для стрельбы второго игрока
         /// </summary>
-        readonly List<OpenTK.Input.Key> secondPlayerFire = new List<OpenTK.Input.Key>()
+        /*readonly List<OpenTK.Input.Key> secondPlayerFire = new List<OpenTK.Input.Key>()
         {
             OpenTK.Input.Key.Insert,
             OpenTK.Input.Key.PageUp,
             OpenTK.Input.Key.PageDown,
-        };
+        };*/
 
-        /// <summary>
-        /// Конструктор окна MainWindow
-        /// </summary>
-        public MainWindow()
+        private bool _isServer;
+        private Socket _socket;
+        private List<Socket> _clientSockets;
+
+        public MainWindow(bool isServer, Socket serverSocket, List<Socket> clientSockets)
         {
+            _isServer = isServer;
+            _socket = serverSocket;  // Сокет для сервера
+            _clientSockets = clientSockets;
 
             InitializeComponent();
             GameSettings();
             AddTexture();
             AddObjects();
             StartTimer();
+            StartReceivingData();
         }
+
+
+        public void StartReceivingData()
+        {
+            Thread receiveThread = new Thread(ReceiveData);
+            receiveThread.Start();
+        }
+
+        private void ReceiveData()
+        {
+            byte[] buffer = new byte[1024];
+            while (_socket.Connected)
+            {
+                int bytesReceived = _socket.Receive(buffer);
+                if (bytesReceived == 0) break;
+
+                string message = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+                DirigibleState state = DirigibleState.Deserialize(message);
+
+                if (state.PlayerId == 1)
+                    UpdatePlayerState(firstPlayer, state);
+                else if (state.PlayerId == 2)
+                    UpdatePlayerState(secondPlayer, state);
+
+                if (_isServer)
+                {
+                    BroadcastStateToClients();
+                }
+            }
+        }
+
+        private void BroadcastStateToClients()
+        {
+            var state = new DirigibleState
+            {
+                PlayerId = 1, // or 2 based on the player state
+                Position = firstPlayer.PositionCenter,
+                Health = firstPlayer.Health,
+                Armor = firstPlayer.Armor,
+                Ammo = firstPlayer.Ammo,
+                Speed = firstPlayer.Speed,
+                Fuel = firstPlayer.Fuel
+            };
+
+            string json = state.Serialize();
+            byte[] data = Encoding.UTF8.GetBytes(json);
+
+            foreach (var clientSocket in _clientSockets)
+            {
+                clientSocket.Send(data);
+            }
+        }
+
+        private void UpdatePlayerState(AbstractDirigible player, DirigibleState state)
+        {
+            player.PositionCenter = state.Position;
+            player.Health = state.Health;
+            player.Armor = state.Armor;
+            player.Ammo = state.Ammo;
+            player.Speed = state.Speed;
+            player.Fuel = state.Fuel;
+        }
+
+
 
         /// <summary>
         /// Задает настройки запускаемого проекта
@@ -335,13 +410,13 @@ namespace DirigibleBattle
 
 
             PlayerShootControl(firstPlayerFire, firstPlayerAmmo, ref firstPlayer);
-            PlayerShootControl(secondPlayerFire, secondPlayerAmmo, ref secondPlayer);
+            PlayerShootControl(firstPlayerFire, secondPlayerAmmo, ref secondPlayer);
 
             firstPlayer.Idle();
             secondPlayer.Idle();
 
             firstPlayer.Control(firstPlayerInput, firstDirigibleTextureLeft, firstDirigibleTextureRight, screenBorderCollider);
-            secondPlayer.Control(secondPlayerInput, secondDirigibleTextureLeft, secondDirigibleTextureRight, screenBorderCollider);
+            secondPlayer.Control(firstPlayerInput, secondDirigibleTextureLeft, secondDirigibleTextureRight, screenBorderCollider);
 
             firstPlayerInfo.Content = $"HP:{firstPlayer.Health}/200\nArmor:{firstPlayer.Armor}/50\n" +
                              $"Ammo:{firstPlayer.Ammo}/30\nSpeed:{firstPlayer.Speed * 10f:F1}x/1.5x\n" +

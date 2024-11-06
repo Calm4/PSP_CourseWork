@@ -14,10 +14,8 @@ namespace GameLibrary.Dirigible
         /// ID текстуры дирижабля
         /// </summary>
         public abstract int DirigibleID { get; set; }
-        /// <summary>
-        /// Позиция центра
-        /// </summary>
-        public Vector2 PositionCenter;
+        public Vector2 PositionCenter { get; set; }  
+        public int PrizesCollected { get; set; }
         /// <summary>
         /// Смещение пушки 
         /// </summary>
