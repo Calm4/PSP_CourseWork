@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="PrizesLibrary.Factories.PrizeFactory">
+    <Position X="3.75" Y="5.5" Width="2" />
+    <Members>
+      <Method Name="PrizeFactory" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.AmmoPrize" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.ArmorPrize" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.FuelPrize" Collapsed="true">
+    <Position X="3.75" Y="3.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.HealthPrize" Collapsed="true">
+    <Position X="3.75" Y="4.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.Prize" Collapsed="true">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <Members>
+      <Method Name="Prize" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.SpeedBoostPrize" Collapsed="true">
+    <Position X="3.75" Y="1.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.CreateTexture" Collapsed="true">
+    <Position X="11.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.ObjectRenderer" Collapsed="true">
+    <Position X="11.75" Y="4" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.Dirigible.AbstractDirigible" Collapsed="true">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.Dirigible.BasicDirigible" Collapsed="true">
+    <Position X="12.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.AmmoBoostDecorator" Collapsed="true">
+    <Position X="8" Y="3.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.ArmorBoostDecorator" Collapsed="true">
+    <Position X="8" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.DirigibleDecorator" Collapsed="true">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.FuelBoostDecorator" Collapsed="true">
+    <Position X="8" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.HealthBoostDecorator" Collapsed="true">
+    <Position X="8" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.SpeedBoostDecorator" Collapsed="true">
+    <Position X="8" Y="2.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="DirigibleBattle.App" Collapsed="true">
+    <Position X="15.75" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ZACAAIoCEBAAABkiADAdABAAABACBAYCgO0BCqAAFyE=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DirigibleBattle.Properties.Resources" Collapsed="true">
+    <Position X="17.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Properties.Settings" Collapsed="true">
+    <Position X="13.75" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AmmunitionLibrary.Bullet" Collapsed="true">
+    <Position X="16" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AmmunitionLibrary.CommonBullet" Collapsed="true">
+    <Position X="14.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AmmunitionLibrary.FastBullet" Collapsed="true">
+    <Position X="17.75" Y="1.75" Width="1.5" />
+    <InheritanceLine Type="AmmunitionLibrary.Bullet" ManuallyRouted="true" FixedFromPoint="true">
+      <Path>
+        <Point X="16.75" Y="1.062" />
+        <Point X="16.75" Y="1.375" />
+        <Point X="18.5" Y="1.375" />
+        <Point X="18.5" Y="1.75" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AmmunitionLibrary.HeavyBullet" Collapsed="true">
+    <Position X="16" Y="1.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

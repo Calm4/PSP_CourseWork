@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="GameLibrary.Dirigible.AbstractDirigible" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACASKABkQKgAAAAAAKAAAAARAiAAAAQEEhQAAAAAAAA=</HashCode>
+      <FileName>Dirigible\AbstractDirigible.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.Dirigible.BasicDirigible" Collapsed="true">
+    <Position X="8.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAACABEQIgAAAAAACAAAAAhAAAAAAQEEgAAAAAAAAA=</HashCode>
+      <FileName>Dirigible\BasicDirigible.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.AmmoBoostDecorator" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAg=</HashCode>
+      <FileName>DirigibleDecorators\AmmoBoostDecorator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.ArmorBoostDecorator" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAhAAAAAAAAAAAAAAAAAAAAAEAAAAAAACAA=</HashCode>
+      <FileName>DirigibleDecorators\ArmorBoostDecorator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.DirigibleDecorator" Collapsed="true">
+    <Position X="5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAACABEQIgAAAAAACBAAAARAAAAAAQEEhAAAAAAAAA=</HashCode>
+      <FileName>DirigibleDecorators\DirigibleDecorator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.FuelBoostDecorator" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAIAAAAAAAAAAAIAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DirigibleDecorators\FuelBoostDecorator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.HealthBoostDecorator" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAgAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>DirigibleDecorators\HealthBoostDecorator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.SpeedBoostDecorator" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAABAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>DirigibleDecorators\SpeedBoostDecorator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

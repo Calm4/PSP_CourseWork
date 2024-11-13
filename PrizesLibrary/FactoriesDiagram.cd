@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="PrizesLibrary.Factories.PrizeFactory">
+    <Position X="4.75" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Factories\PrizeFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.AmmoPrize" Collapsed="true">
+    <Position X="5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Prizes\AmmoPrize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.ArmorPrize" Collapsed="true">
+    <Position X="9.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Prizes\ArmorPrize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.FuelPrize" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Prizes\FuelPrize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.HealthPrize" Collapsed="true">
+    <Position X="7.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Prizes\HealthPrize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.Prize" Collapsed="true">
+    <Position X="5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAEAAAAIAAAAAQAAAAABAAABAAAAAAAAA=</HashCode>
+      <FileName>Prizes\Prize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PrizesLibrary.Prizes.SpeedBoostPrize" Collapsed="true">
+    <Position X="2.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Prizes\SpeedBoostPrize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
