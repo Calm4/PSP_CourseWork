@@ -1,24 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
-using OpenTK.Wpf;
-using System.Drawing;
-using System.Windows.Threading;
-using AmmunitionLibrary;
-using GameLibrary;
-using GameLibrary.DirigibleDecorators;
-using GameLibrary.Dirigible;
-using PrizesLibrary.Factories;
-using PrizesLibrary.Prizes;
-using TcpConnectionLibrary;
-using System.Threading.Tasks;
-using System.Net;
-using System.Linq;
-using System.Net.Sockets;
-using DirigibleBattle;
 using DirigibleBattle.Managers;
 
 

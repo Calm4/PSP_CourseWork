@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionData.cs" />
+    <Compile Include="Data\GameStateData.cs" />
     <Compile Include="CreateTexture.cs" />
     <Compile Include="DirigibleDecorators\AmmoBoostDecorator.cs" />
     <Compile Include="DirigibleDecorators\ArmorBoostDecorator.cs" />
@@ -62,6 +62,8 @@
     <Compile Include="Dirigible\AbstractDirigible.cs" />
     <Compile Include="Dirigible\BasicDirigible.cs" />
     <Compile Include="ObjectRenderer.cs" />
+    <Compile Include="Data\PlayerState.cs" />
+    <Compile Include="Data\PrizeState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
