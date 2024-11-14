@@ -76,6 +76,7 @@ namespace GameLibrary.Dirigible
         /// ID текстуры дирижабля
         /// </summary>
         public override int DirigibleID { get; set; }
+        public override int NumberOfPrizesReceived { get; set; }
 
         /// <summary>
         /// Управление дирижаблем

@@ -1,7 +1,9 @@
-﻿using GameLibrary;
+﻿using AmmunitionLibrary;
+using GameLibrary;
 using GameLibrary.Dirigible;
 using OpenTK;
 using PrizesLibrary.Factories;
+using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,22 +12,42 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TcpConnectionLibrary;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace DirigibleBattle.Managers
 {
     public class NetworkManager
     {
-        public AbstractDirigible CurrentPlayer { get; private set; }
-        public AbstractDirigible NetworkPlayer { get; private set; }
+        private AbstractDirigible _firstPlayer;
+        private AbstractDirigible _secondPlayer;
+
+        public AbstractDirigible CurrentPlayer { get; set; }
+        public AbstractDirigible NetworkPlayer { get; set; }
+        public Prize CurrentPrize { get; set; }
+
+        public List<Prize> CurrentPrizeList;
 
         private ITcpConnectionHandler _handler;
 
         private Client _client;
         private Server _server;
 
+        private NetworkData _currentNetworkData = new NetworkData();
+        private BulletData _bulletData;
+
+        private List<Bullet> _firstAmmos;
+
+        private List<Bullet> _secondAmmos;
+
+        public PrizeFactory PrizeFactory { get; set; }
+
+        private bool _wasAmmoChanged;
+
         private GameManager _gameManager;
         private UIManager _uiManager;
         private TimeManager _timeManager;
+
+        private Random random;
 
         public NetworkManager(GameManager gameManager, UIManager uiManager, TimeManager timeManager)
         {
@@ -34,48 +56,68 @@ namespace DirigibleBattle.Managers
             _timeManager = timeManager;
         }
 
-        public void SetNetworkStartData(ITcpConnectionHandler handler, bool isServer, int seed)
+        public void SetNetworkStartData(ITcpConnectionHandler networkHandler, bool isLeftPlayer, int seed)
         {
-            try
+            _handler = networkHandler;
+            _firstPlayer = _gameManager.FirstPlayer;
+            _secondPlayer = _gameManager.SecondPlayer;
+
+            if (isLeftPlayer)
             {
-                Console.WriteLine("Setting network start data");
-
-                if (isServer)
-                {
-                    Console.WriteLine("Initializing as server");
-                    if (_gameManager.FirstPlayer == null) throw new NullReferenceException("firstPlayer is null");
-                    if (_gameManager.SecondPlayer == null) throw new NullReferenceException("secondPlayer is null");
-
-                    CurrentPlayer = _gameManager.FirstPlayer;
-                    NetworkPlayer = _gameManager.SecondPlayer;
-                }
-                else
-                {
-                    Console.WriteLine("Initializing as client");
-                    if (_gameManager.FirstPlayer == null) throw new NullReferenceException("firstPlayer is null");
-                    if (_gameManager.SecondPlayer == null) throw new NullReferenceException("secondPlayer is null");
-
-                    CurrentPlayer = _gameManager.SecondPlayer;
-                    NetworkPlayer = _gameManager.FirstPlayer;
-                }
-
-                _handler = handler;
-                _handler.OnGetData += OnGetNetworkData;
-                Console.WriteLine("Network start data set successfully");
+                CurrentPlayer = _firstPlayer;
+                NetworkPlayer = _secondPlayer;
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine($"Error in SetNetworkStartData: {ex.Message}");
+                CurrentPlayer = _secondPlayer;
+                NetworkPlayer = _firstPlayer;
             }
+            CurrentPrizeList = _gameManager.PrizeList;
+
+            random = new Random(seed);
+            PrizeFactory = new PrizeFactory(random);
+
+
+
+            _firstPlayer.SetRandom(random);
+            _secondPlayer.SetRandom(random);
+
+            _handler.OnGetData += OnGetNetworkData;
         }
 
         private void OnGetNetworkData(object obj)
         {
             try
             {
-                ConnectionData networkData = (ConnectionData)obj;
+                NetworkData networkData = (NetworkData)obj;
 
-                NetworkPlayer.PositionCenter = new Vector2(networkData.BalloonPositionX, networkData.BalloonPositionY);
+                NetworkPlayer.PositionCenter = new Vector2(networkData.PositionX, networkData.PositionY);
+
+                NetworkPlayer.Health = networkData.Health;
+                NetworkPlayer.Armor = networkData.Armor;
+                NetworkPlayer.Fuel = networkData.Fuel;
+                NetworkPlayer.Ammo = networkData.Ammo;
+                NetworkPlayer.Speed = networkData.Speed;
+                NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
+
+
+                var bulletData = networkData.BulletData;
+
+
+                if (bulletData == null)
+                {
+                    Console.WriteLine("Bullet data is NULL!");
+                    return;
+                }
+
+                if (CurrentPlayer == _firstPlayer)
+                {
+                    _secondAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
+                }
+                else
+                {
+                    _firstAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
+                }
             }
             catch (Exception ex)
             {
@@ -83,26 +125,29 @@ namespace DirigibleBattle.Managers
             }
         }
 
-        public async Task UpdateNetworkDataAsync()
+        public async Task UpdateNetworkData()
         {
             try
             {
-                var networkData = new ConnectionData
-                {
-                    BalloonPositionX = CurrentPlayer.PositionCenter.X,
-                    BalloonPositionY = CurrentPlayer.PositionCenter.Y
-                };
+                var positionCenter = CurrentPlayer.PositionCenter;
+                _currentNetworkData.PositionX = positionCenter.X;
+                _currentNetworkData.PositionY = positionCenter.Y;
 
-                if (_handler is Server)
-                {
-                    // Отправляем данные клиенту
-                    await _handler.UpdateData(networkData);
-                }
-                else if (_handler is Client)
-                {
-                    // Отправляем данные серверу
-                    await _handler.UpdateData(networkData);
-                }
+                _currentNetworkData.BulletData = _bulletData;
+
+                _currentNetworkData.Health = CurrentPlayer.Health;
+                _currentNetworkData.Armor = CurrentPlayer.Armor;
+                _currentNetworkData.Fuel = CurrentPlayer.Fuel;
+                _currentNetworkData.Ammo = CurrentPlayer.Ammo;
+                _currentNetworkData.Speed = CurrentPlayer.Speed;
+                _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
+
+                _currentNetworkData.WasAmmoChanged = _wasAmmoChanged;
+
+                await _handler.UpdateData(_currentNetworkData);
+
+                _bulletData = null;
+                _wasAmmoChanged = false;
             }
             catch (Exception ex)
             {

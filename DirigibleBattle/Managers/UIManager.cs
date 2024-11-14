@@ -96,11 +96,11 @@ namespace DirigibleBattle.Managers
         {
             _firstPlayerInfo.Content = $"HP:{_gameManager.FirstPlayer.Health}/200\nArmor:{_gameManager.FirstPlayer.Armor}/50\n" +
                          $"Ammo:{_gameManager.FirstPlayer.Ammo}/30\nSpeed:{_gameManager.FirstPlayer.Speed * 10f:F1}x/1.5x\n" +
-                         $"Fuel:{_gameManager.FirstPlayer.Fuel}/3000\nPrizes:{_gameManager.NumberOfFirstPlayerPrizes}/15\n";
+                         $"Fuel:{_gameManager.FirstPlayer.Fuel}/3000\nPrizes:{_gameManager.FirstPlayer.NumberOfPrizesReceived}/15\n";
 
             _secondPlayerInfo.Content = $"HP:{_gameManager.SecondPlayer.Health}/200\nArmor:{_gameManager.SecondPlayer.Armor}/50\n" +
                                         $"Ammo:{_gameManager.SecondPlayer.Ammo}/30\nSpeed:{_gameManager.SecondPlayer.Speed * 10f:F1}x/1.5x\n" +
-                                        $"Fuel:{_gameManager.SecondPlayer.Fuel}/3000\nPrizes:{_gameManager.NumberOfSecondPlayerPrizes}/15\n";
+                                        $"Fuel:{_gameManager.SecondPlayer.Fuel}/3000\nPrizes:{_gameManager.SecondPlayer.NumberOfPrizesReceived}/15\n";
         }
 
         public void HideRoleSelection()

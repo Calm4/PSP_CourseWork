@@ -6,11 +6,13 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using OpenTK.Wpf;
+using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 
 namespace DirigibleBattle.Managers
@@ -24,9 +26,6 @@ namespace DirigibleBattle.Managers
         public List<Bullet> SecondPlayerAmmo;
 
         public List<Prize> PrizeList;
-
-        public int NumberOfFirstPlayerPrizes = 0;
-        public int NumberOfSecondPlayerPrizes = 0;
 
         private KeyboardState keyboardState;
 
@@ -48,11 +47,18 @@ namespace DirigibleBattle.Managers
                 Key.D,
             };
 
+
         public readonly List<Key> CurrentPlayerFire = new List<Key>()
         {
             Key.Z,
             Key.X,
             Key.C,
+        };
+        public readonly List<Key> CurrentPlayerFire2 = new List<Key>()
+        {
+            Key.B,
+            Key.N,
+            Key.M,
         };
 
         public GameManager(GLWpfControl glControl, UIManager uiManager)
@@ -69,8 +75,12 @@ namespace DirigibleBattle.Managers
             SetupGameObjects();
         }
 
+        int currentPlayerTicks = 50;
+
         public async void GameTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
         {
+            currentPlayerTicks++;
+
             // Проверка состояния игры
             _uiManager.GameStateCheck();
 
@@ -79,27 +89,42 @@ namespace DirigibleBattle.Managers
             CheckPlayerDamage(SecondPlayerAmmo, ref FirstPlayer);
 
             // Применение призов
-            ApplyPrize(PrizeList, ref FirstPlayer, ref NumberOfFirstPlayerPrizes);
-            ApplyPrize(PrizeList, ref SecondPlayer, ref NumberOfSecondPlayerPrizes);
+            ApplyPrize(networkManager, PrizeList, ref FirstPlayer);
+            ApplyPrize(networkManager, PrizeList, ref SecondPlayer);
 
             // Управление стрельбой игроками
             PlayerShootControl(CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
-            PlayerShootControl(CurrentPlayerFire, SecondPlayerAmmo, ref SecondPlayer);
+            PlayerShootControl(CurrentPlayerFire2, SecondPlayerAmmo, ref SecondPlayer);
 
             // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
-            networkManager. CurrentPlayer.Control(CurrentPlayerInput, TextureManager.firstDirigibleTextureLeft, TextureManager.firstDirigibleTextureRight, ColliderManager.screenBorderCollider);
+            networkManager.CurrentPlayer.Control(CurrentPlayerInput, TextureManager.firstDirigibleTextureLeft, TextureManager.firstDirigibleTextureRight, ColliderManager.screenBorderCollider);
 
             // Обновление данных сетевого игрока
-            _ = networkManager.UpdateNetworkDataAsync();
+            _ = networkManager.UpdateNetworkData();
 
             // Обновление интерфейса
             _uiManager.UpdatePlayerStats();
 
-            // Замедление частоты обновлений для предотвращения лагов
-            await Task.Delay(40);
         }
 
+        public void PrizeTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
+        {
+            if (networkManager.CurrentPrizeList.Count < 3 && (FirstPlayer.NumberOfPrizesReceived < 15 || SecondPlayer.NumberOfPrizesReceived < 15))
+            {
+                Prize newPrize = networkManager.PrizeFactory.AddNewPrize();
+                networkManager.CurrentPrize = newPrize;
+                networkManager.CurrentPrizeList.Add(networkManager.CurrentPrize);
+            }
+            for (int i = 0; i < PrizeList.Count; i++)
+            {
+                if (FirstPlayer.NumberOfPrizesReceived >= 15 && SecondPlayer.NumberOfPrizesReceived >= 15)
+                {
+                   networkManager.CurrentPrizeList.RemoveAt(PrizeList.Count - 1);
+                }
+            }
+        }
+        
         private void GameSettings(GLWpfControl glControl)
         {
             var settings = new GLWpfControlSettings { MajorVersion = 3, MinorVersion = 6 };
@@ -117,6 +142,26 @@ namespace DirigibleBattle.Managers
             FirstPlayerAmmo = new List<Bullet>();
             SecondPlayerAmmo = new List<Bullet>();
             PrizeList = new List<Prize>();
+        }
+
+        public Bullet CreateNewAmmo(BulletData bulletData)
+        {
+            Bullet bullet = null;
+            switch (bulletData.BulletType)
+            {
+                case 0:
+                    bullet = new CommonBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.commonBulletTexture, bulletData.IsLeft);
+                    break;
+                case 1:
+                    bullet = new FastBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.fastBulletTexture, bulletData.IsLeft);
+                    break;
+                case 2:
+                    bullet = new HeavyBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.heavyBulletTexture, bulletData.IsLeft);
+
+                    break;
+            }
+
+            return bullet;
         }
 
         public void PlayerShootControl(List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)
@@ -168,45 +213,46 @@ namespace DirigibleBattle.Managers
                 }
             }
         }
-        public void ApplyPrize(List<Prize> prizeList, ref AbstractDirigible player, ref int prizeCounter)
+        public void ApplyPrize(NetworkManager networkManager, List<Prize> prizeList, ref AbstractDirigible player)
         {
             for (int i = 0; i < prizeList.Count; i++)
             {
-                Prize prize = prizeList[i];
+                networkManager.CurrentPrize = prizeList[i];
 
-                if (player.GetCollider().IntersectsWith(prize.GetCollider()) && prizeCounter < 15)
+
+                if (player.GetCollider().IntersectsWith(networkManager.CurrentPrize.GetCollider()) && player.NumberOfPrizesReceived < 15)
                 {
-                    if (prize.GetType().Equals(typeof(AmmoPrize)))
+                    if (networkManager.CurrentPrize.GetType().Equals(typeof(AmmoPrize)))
                     {
                         int ammoBoostCount = random.Next(2, 6);
                         player = new AmmoBoostDecorator(player, ammoBoostCount);
-                        prizeCounter++;
+                        player.NumberOfPrizesReceived++;
                     }
-                    if (prize.GetType().Equals(typeof(ArmorPrize)))
+                    if (networkManager.CurrentPrize.GetType().Equals(typeof(ArmorPrize)))
                     {
                         int armorBoostCount = random.Next(10, 31);
                         player = new ArmorBoostDecorator(player, armorBoostCount);
-                        prizeCounter++;
+                        player.NumberOfPrizesReceived++;
                     }
-                    if (prize.GetType().Equals(typeof(FuelPrize)))
+                    if (networkManager.CurrentPrize.GetType().Equals(typeof(FuelPrize)))
                     {
                         int fuelBoostCount = random.Next(250, 751);
                         player = new FuelBoostDecorator(player, fuelBoostCount);
-                        prizeCounter++;
+                        player.NumberOfPrizesReceived++;
                     }
-                    if (prize.GetType().Equals(typeof(HealthPrize)))
+                    if (networkManager.CurrentPrize.GetType().Equals(typeof(HealthPrize)))
                     {
                         int healthBoostCount = random.Next(10, 31);
                         player = new HealthBoostDecorator(player, healthBoostCount);
-                        prizeCounter++;
+                        player.NumberOfPrizesReceived++;
                     }
-                    if (prize.GetType().Equals(typeof(SpeedBoostPrize)))
+                    if (networkManager.CurrentPrize.GetType().Equals(typeof(SpeedBoostPrize)))
                     {
                         float speedBoostCount = (float)(random.NextDouble() * 0.02 + 0.005);
                         player = new SpeedBoostDecorator(player, speedBoostCount);
-                        prizeCounter++;
+                        player.NumberOfPrizesReceived++;
                     }
-                    prizeList.Remove(prize);
+                    prizeList.Remove(networkManager.CurrentPrize);
                     i--;
                 }
             }

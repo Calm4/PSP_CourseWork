@@ -1,6 +1,8 @@
 ﻿using OpenTK;
 using PrizesLibrary.Factories;
+using PrizesLibrary.Prizes;
 using System;
+using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 
 namespace DirigibleBattle.Managers
@@ -26,7 +28,7 @@ namespace DirigibleBattle.Managers
         public TimeManager(GameManager gameManager)
         {
             random = new Random();
-            prizeFactory = new PrizeFactory();
+            prizeFactory = new PrizeFactory(random);
             
             _gameManager = gameManager;
         }
@@ -35,15 +37,15 @@ namespace DirigibleBattle.Managers
         {
             Console.WriteLine("Initializing timers...");
 
-            gameTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40.0) };
+            gameTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25.0) };
             gameTimer.Tick += (sender, e) => _gameManager.GameTimer_Tick(networkManager, sender, e);
             Console.WriteLine("Game timer initialized");
 
-            prizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40.0) };
-            prizeTimer.Tick += PrizeTimer_Tick;
+            prizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25.0) };
+            prizeTimer.Tick += (sender, e) => _gameManager.PrizeTimer_Tick(networkManager, sender, e);
             Console.WriteLine("Prize timer initialized");
 
-            windTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(40.0) };
+            windTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25.0) };
             windTimer.Tick += WindTimer_Tick;
             Console.WriteLine("Wind timer initialized");
 
@@ -56,9 +58,6 @@ namespace DirigibleBattle.Managers
             windTimer.Start();
             Console.WriteLine("Wind timer started");
         }
-
-
-
 
         private void WindTimer_Tick(object sender, EventArgs e)
         {
@@ -90,19 +89,6 @@ namespace DirigibleBattle.Managers
             _gameManager.WindDirection();
         }
 
-        private void PrizeTimer_Tick(object sender, EventArgs e)
-        {
-            if (_gameManager.PrizeList.Count < 3 && (_gameManager.NumberOfFirstPlayerPrizes < 15 || _gameManager.NumberOfSecondPlayerPrizes < 15))
-            {
-                _gameManager.PrizeList.Add(prizeFactory.AddNewPrize());
-            }
-            for (int i = 0; i < _gameManager.PrizeList.Count; i++)
-            {
-                if (_gameManager.NumberOfFirstPlayerPrizes >= 15 && _gameManager.NumberOfSecondPlayerPrizes >= 15)
-                {
-                    _gameManager.PrizeList.RemoveAt(_gameManager.PrizeList.Count - 1);
-                }
-            }
-        }
+        
     }
 }

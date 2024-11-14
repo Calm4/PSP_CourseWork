@@ -81,7 +81,8 @@ namespace TcpConnectionLibrary
         public async Task UpdateData<T>(T obj)
         {
             var json = JsonConvert.SerializeObject(obj);
-            Console.WriteLine($"Sending JSON data: {json}");
+            
+            //Console.WriteLine($"Sending JSON data: {json}");
 
             var data = Encoding.UTF8.GetBytes(json);
 

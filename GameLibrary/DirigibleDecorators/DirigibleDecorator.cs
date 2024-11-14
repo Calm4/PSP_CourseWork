@@ -75,6 +75,12 @@ namespace GameLibrary.DirigibleDecorators
             set { _dirigible.DirigibleID = value; }
         }
 
+        public override int NumberOfPrizesReceived
+        {
+            get { return _dirigible.NumberOfPrizesReceived; }
+            set { _dirigible.NumberOfPrizesReceived = value; }
+        }
+
         /// <summary>
         /// Получение урона
         /// </summary>

@@ -42,7 +42,7 @@ namespace TcpConnectionLibrary
                 int bytesReceived = _clientSocket.Receive(buffer);
                 var requestText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
 
-                Console.WriteLine($"Received raw data: '{requestText}'");
+                //Console.WriteLine($"Received raw data: '{requestText}'");
 
                 try
                 {
@@ -77,16 +77,5 @@ namespace TcpConnectionLibrary
         {
             OnGetData = null;
         }
-    }
-}
-
-namespace GameLibrary
-{
-    public class NetworkData
-    {
-        public float BalloonPositionX;
-        public float BalloonPositionY;
-        public bool IsServerData;
-        public bool IsClientData;
     }
 }

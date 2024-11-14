@@ -9,14 +9,19 @@ namespace PrizesLibrary.Factories
     /// </summary>
     public class PrizeFactory
     {
+        Random random;
+
+        public PrizeFactory(Random random)
+        {
+            this.random = random;
+
+        }
         /// <summary>
         /// Создание нового приза
         /// </summary>
         /// <returns>Случайный подарок</returns>
         public Prize AddNewPrize()
         {
-
-            Random random = new Random();
             float randomPosX, randomPosY;
             Prize prize = null;
             int prizeNumber = random.Next(0, 5);
