@@ -42,7 +42,7 @@ namespace DirigibleBattle.Managers
             {
                 bullet.Render();
             }
-            foreach (Bullet bullet in _networkManager._firstPlayerBulletList)
+            foreach (Bullet bullet in _networkManager._secondPlayerBulletList)
             {
                 bullet.Render();
             }
