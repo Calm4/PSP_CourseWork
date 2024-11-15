@@ -93,8 +93,8 @@ namespace DirigibleBattle.Managers
             {
                 NetworkData networkData = (NetworkData)obj;
 
-                // Обновление данных сетевого игрока
                 NetworkPlayer.PositionCenter = new Vector2(networkData.PositionX, networkData.PositionY);
+
                 NetworkPlayer.Health = networkData.Health;
                 NetworkPlayer.Armor = networkData.Armor;
                 NetworkPlayer.Fuel = networkData.Fuel;
@@ -102,26 +102,25 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.Speed = networkData.Speed;
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
 
-                // Обработка данных пули
-                if (networkData.BulletData != null)
+
+                var bulletData = BulletData;
+
+
+                if (bulletData == null)
                 {
-                    Bullet bullet = _gameManager.CreateNewAmmo(networkData.BulletData);
-                    if (NetworkPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight)
-                    {
-                        _gameManager.FirstPlayerAmmo.Add(bullet);
-                    }
-                    else
-                    {
-                        _gameManager.SecondPlayerAmmo.Add(bullet);
-                    }
+                    //Console.WriteLine("Bullet data is NULL!");
+                    return;
                 }
+
+                
+
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in OnGetNetworkData: {ex.Message}");
             }
         }
-
 
         public async Task UpdateNetworkData()
         {
@@ -131,7 +130,6 @@ namespace DirigibleBattle.Managers
                 _currentNetworkData.PositionX = positionCenter.X;
                 _currentNetworkData.PositionY = positionCenter.Y;
 
-                // Передача данных пули
                 _currentNetworkData.BulletData = _bulletData;
 
                 _currentNetworkData.Health = CurrentPlayer.Health;
@@ -143,14 +141,14 @@ namespace DirigibleBattle.Managers
 
                 await _handler.UpdateData(_currentNetworkData);
 
+                _bulletData = null;
                 _wasAmmoChanged = false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in UpdateNetworkData: {ex.Message}");
+                Console.WriteLine($"Error in UpdateNetworkDataAsync: {ex.Message}");
             }
         }
-
 
         public async void StartServer()
         {
