@@ -1,4 +1,5 @@
-﻿using AmmunitionLibrary;
+﻿
+using AmmunitionLibrary;
 using GameLibrary;
 using GameLibrary.Dirigible;
 using GameLibrary.DirigibleDecorators;
@@ -26,7 +27,6 @@ namespace DirigibleBattle.Managers
         public List<Bullet> SecondPlayerAmmo;
 
         public List<Prize> PrizeList;
-        public List<Bullet> BulletList;
 
         private KeyboardState keyboardState;
 
@@ -86,16 +86,16 @@ namespace DirigibleBattle.Managers
             _uiManager.GameStateCheck();
 
             // Обработка повреждений игроков
-            CheckPlayerDamage(networkManager, FirstPlayerAmmo, ref SecondPlayer);
-            CheckPlayerDamage(networkManager, SecondPlayerAmmo, ref FirstPlayer);
+            CheckPlayerDamage(FirstPlayerAmmo, ref SecondPlayer);
+            CheckPlayerDamage(SecondPlayerAmmo, ref FirstPlayer);
 
             // Применение призов
             ApplyPrize(networkManager, PrizeList, ref FirstPlayer);
             ApplyPrize(networkManager, PrizeList, ref SecondPlayer);
 
             // Управление стрельбой игроками
-            PlayerShootControl(networkManager, CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
-            PlayerShootControl(networkManager, CurrentPlayerFire, SecondPlayerAmmo, ref SecondPlayer);
+            PlayerShootControl(CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
+            PlayerShootControl(CurrentPlayerFire2, SecondPlayerAmmo, ref SecondPlayer);
 
             // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
@@ -143,10 +143,9 @@ namespace DirigibleBattle.Managers
             FirstPlayerAmmo = new List<Bullet>();
             SecondPlayerAmmo = new List<Bullet>();
             PrizeList = new List<Prize>();
-            BulletList = new List<Bullet>();
         }
 
-        public void PlayerShootControl(NetworkManager networkManager, List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)
+        public void PlayerShootControl(List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)
         {
             keyboardState = OpenTK.Input.Keyboard.GetState();
 
@@ -160,38 +159,20 @@ namespace DirigibleBattle.Managers
             {
                 if (player.Ammo > 0)
                 {
-                    Bullet bullet = null;
                     if (playerFireCommon)
                     {
-                        bullet = new CommonBullet(player.GetGunPosition(), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
-                        bulletsList.Add(bullet);
-                        networkManager.CurrentBulletsList = bulletsList;
-                        networkManager.CurrentBullet = bullet;
+                        bulletsList.Add(new CommonBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
                     }
-                    else if (playerFireFast)
+                    if (playerFireFast)
                     {
-                        bullet = new FastBullet(player.GetGunPosition(), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
-                        bulletsList.Add(bullet);
-                        networkManager.CurrentBulletsList = bulletsList;
-                        networkManager.CurrentBullet = bullet;
+                        bulletsList.Add(new FastBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
                     }
-                    else if (playerFireHeavy)
+                    if (playerFireHeavy)
                     {
-                        bullet = new HeavyBullet(player.GetGunPosition(), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
-                        bulletsList.Add(bullet);
-                        networkManager.CurrentBulletsList = bulletsList;
-                        networkManager.CurrentBullet = bullet;
+                        bulletsList.Add(new HeavyBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
                     }
-
-                    BulletData bulletData = new BulletData()
-                    {
-                        PositionX = bullet.PositionCenter.X,
-                        PositionY = bullet.PositionCenter.Y,
-                    };
-                    networkManager.BulletData = bulletData;
                     player.Ammo--;
                 }
-
                 if (player == FirstPlayer)
                 {
                     wasFirstPlayerFirePressed = true;
@@ -213,7 +194,6 @@ namespace DirigibleBattle.Managers
                 }
             }
         }
-
         public void ApplyPrize(NetworkManager networkManager, List<Prize> prizeList, ref AbstractDirigible player)
         {
             for (int i = 0; i < prizeList.Count; i++)
@@ -259,7 +239,7 @@ namespace DirigibleBattle.Managers
             }
         }
 
-        public void CheckPlayerDamage(NetworkManager networkManager, List<Bullet> bulletList, ref AbstractDirigible player)
+        public void CheckPlayerDamage(List<Bullet> bulletList, ref AbstractDirigible player)
         {
             for (int i = bulletList.Count - 1; i >= 0; i--)
             {

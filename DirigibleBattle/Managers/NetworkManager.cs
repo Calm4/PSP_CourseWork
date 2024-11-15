@@ -74,7 +74,6 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer = _firstPlayer;
             }
             CurrentPrizeList = _gameManager.PrizeList;
-            CurrentBulletsList = _gameManager.BulletList;
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
