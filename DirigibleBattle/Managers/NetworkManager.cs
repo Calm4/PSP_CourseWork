@@ -18,8 +18,8 @@ namespace DirigibleBattle.Managers
         private AbstractDirigible _firstPlayer;
         private AbstractDirigible _secondPlayer;
 
-        private List<Bullet> _firstPlayerBulletList;
-        private List<Bullet> _secondPlayerBulletList;
+        public List<Bullet> _firstPlayerBulletList;
+        public List<Bullet> _secondPlayerBulletList;
 
         public AbstractDirigible CurrentPlayer { get; set; }
         public AbstractDirigible NetworkPlayer { get; set; }

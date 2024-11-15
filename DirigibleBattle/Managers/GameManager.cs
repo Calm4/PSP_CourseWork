@@ -93,8 +93,8 @@ namespace DirigibleBattle.Managers
             ApplyPrize(networkManager, PrizeList, ref SecondPlayer);
 
             // Управление стрельбой игроками
-            PlayerShootControl(networkManager, CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
-            PlayerShootControl(networkManager, CurrentPlayerFire, SecondPlayerAmmo, ref SecondPlayer);
+            //PlayerShootControl(networkManager, CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
+            PlayerShootControl(networkManager, CurrentPlayerFire);
 
             // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
@@ -164,7 +164,7 @@ namespace DirigibleBattle.Managers
             return bullet;
         }
 
-        public void PlayerShootControl(NetworkManager networkManager, List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)
+        public void PlayerShootControl(NetworkManager networkManager, List<OpenTK.Input.Key> keys)
         {
             keyboardState = OpenTK.Input.Keyboard.GetState();
 
@@ -172,28 +172,36 @@ namespace DirigibleBattle.Managers
             bool playerFireFast = keyboardState.IsKeyDown(keys[1]);
             bool playerFireHeavy = keyboardState.IsKeyDown(keys[2]);
 
-            bool wasPlayerFirePressed = (player == FirstPlayer) ? wasFirstPlayerFirePressed : wasSecondPlayerFirePressed;
+            bool wasPlayerFirePressed = (networkManager.CurrentPlayer == FirstPlayer) ? wasFirstPlayerFirePressed : wasSecondPlayerFirePressed;
 
+            
             if (!wasPlayerFirePressed && (playerFireCommon || playerFireFast || playerFireHeavy))
             {
-                if (player.Ammo > 0)
+                if (networkManager.CurrentPlayer.Ammo > 0)
                 {
                     Bullet bullet = null;
                     if (playerFireCommon)
                     {
-                        bullet = new CommonBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
-                        bulletsList.Add(bullet);
+                        bullet = new CommonBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
                     }
                     if (playerFireFast)
                     {
-                        bullet = new FastBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
-                        bulletsList.Add(bullet);
+                        bullet = new FastBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
                     }
                     if (playerFireHeavy)
                     {
-                        bullet = new HeavyBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
-                        bulletsList.Add(bullet);
+                        bullet = new HeavyBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
                     }
+
+                    if (networkManager.CurrentPlayer == FirstPlayer)
+                    {
+                        networkManager._firstPlayerBulletList.Add(bullet);
+                    }
+                    else
+                    {
+                        networkManager._secondPlayerBulletList.Add(bullet);
+                    }
+
 
                     networkManager.BulletData = new BulletData()
                     {
@@ -202,9 +210,9 @@ namespace DirigibleBattle.Managers
 
                     };
 
-                    player.Ammo--;
+                    networkManager.CurrentPlayer.Ammo--;
                 }
-                if (player == FirstPlayer)
+                if (networkManager.CurrentPlayer == FirstPlayer)
                 {
                     wasFirstPlayerFirePressed = true;
                 }
@@ -215,7 +223,7 @@ namespace DirigibleBattle.Managers
             }
             else if (wasPlayerFirePressed && !(playerFireCommon || playerFireFast || playerFireHeavy))
             {
-                if (player == FirstPlayer)
+                if (networkManager.CurrentPlayer == FirstPlayer)
                 {
                     wasFirstPlayerFirePressed = false;
                 }
