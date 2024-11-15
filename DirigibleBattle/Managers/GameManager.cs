@@ -1,5 +1,4 @@
-﻿
-using AmmunitionLibrary;
+﻿﻿using AmmunitionLibrary;
 using GameLibrary;
 using GameLibrary.Dirigible;
 using GameLibrary.DirigibleDecorators;
@@ -143,6 +142,26 @@ namespace DirigibleBattle.Managers
             FirstPlayerAmmo = new List<Bullet>();
             SecondPlayerAmmo = new List<Bullet>();
             PrizeList = new List<Prize>();
+        }
+
+        public Bullet CreateNewAmmo(BulletData bulletData)
+        {
+            Bullet bullet = null;
+            switch (bulletData.BulletType)
+            {
+                case 0:
+                    bullet = new CommonBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.commonBulletTexture, bulletData.IsLeft);
+                    break;
+                case 1:
+                    bullet = new FastBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.fastBulletTexture, bulletData.IsLeft);
+                    break;
+                case 2:
+                    bullet = new HeavyBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.heavyBulletTexture, bulletData.IsLeft);
+
+                    break;
+            }
+
+            return bullet;
         }
 
         public void PlayerShootControl(List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)

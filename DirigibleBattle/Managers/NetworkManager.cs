@@ -6,10 +6,13 @@ using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TcpConnectionLibrary;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace DirigibleBattle.Managers
 {
@@ -24,25 +27,19 @@ namespace DirigibleBattle.Managers
 
         public List<Prize> CurrentPrizeList;
 
-        public List<Bullet> CurrentBulletsList;
-        public Bullet CurrentBullet;
-
-        public BulletData BulletData;
-
         private ITcpConnectionHandler _handler;
 
         private Client _client;
         private Server _server;
 
         private NetworkData _currentNetworkData = new NetworkData();
+        private BulletData _bulletData;
 
         private List<Bullet> _firstAmmos;
 
         private List<Bullet> _secondAmmos;
 
         public PrizeFactory PrizeFactory { get; set; }
-
-        private bool _wasAmmoChanged;
 
         private GameManager _gameManager;
         private UIManager _uiManager;
@@ -74,6 +71,7 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer = _firstPlayer;
             }
             CurrentPrizeList = _gameManager.PrizeList;
+
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
@@ -100,6 +98,24 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.Speed = networkData.Speed;
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
 
+
+                var bulletData = networkData.BulletData;
+
+
+                if (bulletData == null)
+                {
+                    Console.WriteLine("Bullet data is NULL!");
+                    return;
+                }
+
+                if (CurrentPlayer == _firstPlayer)
+                {
+                    _secondAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
+                }
+                else
+                {
+                    _firstAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
+                }
             }
             catch (Exception ex)
             {
@@ -112,9 +128,10 @@ namespace DirigibleBattle.Managers
             try
             {
                 var positionCenter = CurrentPlayer.PositionCenter;
-
                 _currentNetworkData.PositionX = positionCenter.X;
                 _currentNetworkData.PositionY = positionCenter.Y;
+
+                _currentNetworkData.BulletData = _bulletData;
 
                 _currentNetworkData.Health = CurrentPlayer.Health;
                 _currentNetworkData.Armor = CurrentPlayer.Armor;
@@ -123,17 +140,10 @@ namespace DirigibleBattle.Managers
                 _currentNetworkData.Speed = CurrentPlayer.Speed;
                 _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
 
-                if (BulletData != null)
-                {
-                    _currentNetworkData.BulletData = BulletData;
-                }
-                else
-                {
-                    Console.WriteLine("Bullet data is null [NetworkManager]");
-                }
-
 
                 await _handler.UpdateData(_currentNetworkData);
+
+                _bulletData = null;
             }
             catch (Exception ex)
             {
