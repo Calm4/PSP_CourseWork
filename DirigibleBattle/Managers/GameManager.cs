@@ -208,7 +208,7 @@ namespace DirigibleBattle.Managers
                     {
                         PositionX = bullet.PositionCenter.X,
                         PositionY = bullet.PositionCenter.Y,
-                        IsLeft = bullet.Direction.X < 0,
+                        IsLeft = bullet.Direction.X > 0,
                         BulletType = SerializeAmmo(bullet)
 
                     };
