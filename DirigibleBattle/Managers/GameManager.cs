@@ -172,6 +172,8 @@ namespace DirigibleBattle.Managers
             Console.WriteLine(playerFireFast + " playerFireFast");
             Console.WriteLine(playerFireHeavy + " playerFireHeavy");*/
 
+            var dirigibleRightTexture = networkManager.CurrentPlayer == FirstPlayer ? TextureManager.firstDirigibleTextureRight : TextureManager.secondDirigibleTextureRight;
+
             if ((playerFireCommon || playerFireFast || playerFireHeavy) && currentPlayerTicks >= 50)
             {
                 currentPlayerTicks = 0;
@@ -183,15 +185,15 @@ namespace DirigibleBattle.Managers
                     if (playerFireCommon)
                     {
                         Console.WriteLine("3");
-                        bullet = new CommonBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bullet = new CommonBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, networkManager.CurrentPlayer.DirigibleID == dirigibleRightTexture);
                     }
                     if (playerFireFast)
                     {
-                        bullet = new FastBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bullet = new FastBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, networkManager.CurrentPlayer.DirigibleID == dirigibleRightTexture);
                     }
                     if (playerFireHeavy)
                     {
-                        bullet = new HeavyBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bullet = new HeavyBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, networkManager.CurrentPlayer.DirigibleID == dirigibleRightTexture);
                     }
 
 
