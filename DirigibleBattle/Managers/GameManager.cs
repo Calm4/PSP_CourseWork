@@ -94,7 +94,7 @@ namespace DirigibleBattle.Managers
 
             // Управление стрельбой игроками
             //PlayerShootControl(networkManager, CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
-            PlayerShootControl(networkManager, CurrentPlayerFire);
+            PlayerShoot(networkManager, CurrentPlayerFire);
 
             // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
@@ -162,6 +162,74 @@ namespace DirigibleBattle.Managers
             }
 
             return bullet;
+        }
+
+        public void PlayerShoot(NetworkManager networkManager, List<Key> keys)
+        {
+            keyboardState = OpenTK.Input.Keyboard.GetState();
+
+            bool playerFireCommon = keyboardState.IsKeyDown(keys[0]);
+            bool playerFireFast = keyboardState.IsKeyDown(keys[1]);
+            bool playerFireHeavy = keyboardState.IsKeyDown(keys[2]);
+
+            if (playerFireCommon || playerFireFast || playerFireHeavy)
+            {
+                if (networkManager.CurrentPlayer.Ammo > 0)
+                {
+                    Bullet bullet = null;
+                    if (playerFireCommon)
+                    {
+                        bullet = new CommonBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                    }
+                    if (playerFireFast)
+                    {
+                        bullet = new FastBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                    }
+                    if (playerFireHeavy)
+                    {
+                        bullet = new HeavyBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                    }
+
+
+                    if (networkManager.CurrentPlayer == FirstPlayer)
+                    {
+                        networkManager._firstPlayerBulletList.Add(bullet);
+                    }
+                    else
+                    {
+                        networkManager._secondPlayerBulletList.Add(bullet);
+                    }
+
+                    networkManager.BulletData = new BulletData()
+                    {
+                        PositionX = bullet.PositionCenter.X,
+                        PositionY = bullet.PositionCenter.Y,
+                        IsLeft = bullet.Direction.X < 0,
+                        BulletType = SerializeAmmo(bullet)
+
+                    };
+
+                    networkManager.CurrentPlayer.Ammo--;
+                }
+            }
+        }
+
+        public static int SerializeAmmo(Bullet bullet)
+        {
+            if (bullet is CommonBullet)
+            {
+                return 0;
+            }
+            if (bullet is FastBullet)
+            {
+                return 1;
+            }
+            if (bullet is HeavyBullet)
+            {
+                return 2;
+            }
+
+            return -1;
         }
 
         public void PlayerShootControl(NetworkManager networkManager, List<OpenTK.Input.Key> keys)

@@ -26,7 +26,7 @@ namespace AmmunitionLibrary
         {
             PositionCenter = startPosition;
             TextureID = textureID;
-            this.direction = direction ? new Vector2(Speed, 0f) : new Vector2(-Speed, 0f);
+            this.Direction = direction ? new Vector2(Speed, 0f) : new Vector2(-Speed, 0f);
         }
         /// <summary>
         /// Задание размера пули

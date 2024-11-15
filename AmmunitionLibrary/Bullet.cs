@@ -30,7 +30,7 @@ namespace AmmunitionLibrary
         /// <summary>
         /// Изменение направления пули через 
         /// </summary>
-        protected Vector2 direction;
+        public Vector2 Direction;
 
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace AmmunitionLibrary
         /// </summary>
         public virtual void Fire()
         {
-            PositionCenter += direction;
+            PositionCenter += Direction;
         }
         /// <summary>
         /// Получение коллайдера объекта пули 
