@@ -177,14 +177,11 @@ namespace DirigibleBattle.Managers
             if ((playerFireCommon || playerFireFast || playerFireHeavy) && currentPlayerTicks >= 50)
             {
                 currentPlayerTicks = 0;
-                Console.WriteLine("1");
                 if (networkManager.CurrentPlayer.Ammo > 0)
                 {
-                    Console.WriteLine("2");
                     Bullet bullet = null;
                     if (playerFireCommon)
                     {
-                        Console.WriteLine("3");
                         bullet = new CommonBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, networkManager.CurrentPlayer.DirigibleID == dirigibleRightTexture);
                     }
                     if (playerFireFast)
