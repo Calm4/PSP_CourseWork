@@ -13,7 +13,6 @@
         public int NumberOfPrizesReceived;
 
         public BulletData BulletData;
-        public bool WasAmmoChanged;
     }
 
     public class BulletData

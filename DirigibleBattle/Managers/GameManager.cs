@@ -181,35 +181,31 @@ namespace DirigibleBattle.Managers
                     Bullet bullet = null;
                     if (playerFireCommon)
                     {
-                        Console.WriteLine("CommonBullet!");
-                        bullet = new CommonBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), 
-                            TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bullet = new CommonBullet(player.GetGunPosition(), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
                         bulletsList.Add(bullet);
                     }
-                    if (playerFireFast)
+                    else if (playerFireFast)
                     {
-                        Console.WriteLine("FastBullet!");
-                        bullet = new FastBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), 
-                            TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bullet = new FastBullet(player.GetGunPosition(), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
                         bulletsList.Add(bullet);
                     }
-                    if (playerFireHeavy)
+                    else if (playerFireHeavy)
                     {
-                        Console.WriteLine("HeaveBullet!");
-                        bullet = new HeavyBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), 
-                            TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bullet = new HeavyBullet(player.GetGunPosition(), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
                         bulletsList.Add(bullet);
                     }
-                    networkManager.CurrentBullet = bullet;
 
-                    networkManager.BulletData = new BulletData()
+                    networkManager.BulletData = new BulletData
                     {
                         PositionX = bullet.PositionCenter.X,
                         PositionY = bullet.PositionCenter.Y,
+                        BulletType = bullet.GetType() == typeof(CommonBullet) ? 0 :
+                                     bullet.GetType() == typeof(FastBullet) ? 1 : 2
                     };
 
                     player.Ammo--;
                 }
+
                 if (player == FirstPlayer)
                 {
                     wasFirstPlayerFirePressed = true;
@@ -231,6 +227,7 @@ namespace DirigibleBattle.Managers
                 }
             }
         }
+
         public void ApplyPrize(NetworkManager networkManager, List<Prize> prizeList, ref AbstractDirigible player)
         {
             for (int i = 0; i < prizeList.Count; i++)
