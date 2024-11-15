@@ -24,7 +24,7 @@ namespace DirigibleBattle.Managers
 
         public List<Prize> CurrentPrizeList;
 
-        public List<Bullet> CurrentBullets;
+        public List<Bullet> CurrentBulletsList;
         public Bullet CurrentBullet;
 
         public BulletData BulletData;
@@ -35,7 +35,6 @@ namespace DirigibleBattle.Managers
         private Server _server;
 
         private NetworkData _currentNetworkData = new NetworkData();
-        private BulletData _bulletData;
 
         private List<Bullet> _firstAmmos;
 
@@ -75,7 +74,7 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer = _firstPlayer;
             }
             CurrentPrizeList = _gameManager.PrizeList;
-
+            CurrentBulletsList = _gameManager.BulletList;
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
@@ -102,19 +101,6 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.Speed = networkData.Speed;
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
 
-
-                var bulletData = BulletData;
-
-
-                if (bulletData == null)
-                {
-                    //Console.WriteLine("Bullet data is NULL!");
-                    return;
-                }
-
-                
-
-
             }
             catch (Exception ex)
             {
@@ -127,10 +113,9 @@ namespace DirigibleBattle.Managers
             try
             {
                 var positionCenter = CurrentPlayer.PositionCenter;
+
                 _currentNetworkData.PositionX = positionCenter.X;
                 _currentNetworkData.PositionY = positionCenter.Y;
-
-                _currentNetworkData.BulletData = _bulletData;
 
                 _currentNetworkData.Health = CurrentPlayer.Health;
                 _currentNetworkData.Armor = CurrentPlayer.Armor;
@@ -139,10 +124,17 @@ namespace DirigibleBattle.Managers
                 _currentNetworkData.Speed = CurrentPlayer.Speed;
                 _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
 
-                await _handler.UpdateData(_currentNetworkData);
+                if (BulletData != null)
+                {
+                    _currentNetworkData.BulletData = BulletData;
+                }
+                else
+                {
+                    Console.WriteLine("Bullet data is null [NetworkManager]");
+                }
 
-                _bulletData = null;
-                _wasAmmoChanged = false;
+
+                await _handler.UpdateData(_currentNetworkData);
             }
             catch (Exception ex)
             {
