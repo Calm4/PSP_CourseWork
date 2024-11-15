@@ -1,4 +1,6 @@
-﻿namespace GameLibrary
+﻿using System.Collections.Generic;
+
+namespace GameLibrary
 {
     public class NetworkData
     {
@@ -12,14 +14,15 @@
         public float Speed;
         public int NumberOfPrizesReceived;
 
-        public BulletData BulletData;
+        public List<BulletData> BulletsData = new List<BulletData>();
     }
 
     public class BulletData
     {
+        public int ID;
         public float PositionX;
         public float PositionY;
         public bool IsLeft;
-        public object BulletType;
+        public int BulletType;
     }
 }

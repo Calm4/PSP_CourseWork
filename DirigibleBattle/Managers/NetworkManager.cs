@@ -93,7 +93,6 @@ namespace DirigibleBattle.Managers
             {
                 NetworkData networkData = (NetworkData)obj;
 
-                // Обновление данных сетевого игрока
                 NetworkPlayer.PositionCenter = new Vector2(networkData.PositionX, networkData.PositionY);
                 NetworkPlayer.Health = networkData.Health;
                 NetworkPlayer.Armor = networkData.Armor;
@@ -102,18 +101,12 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.Speed = networkData.Speed;
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
 
-                // Обработка данных пули
-                if (networkData.BulletData != null)
+                // Обновляем список пуль на клиенте
+                CurrentBullets.Clear();
+                foreach (var bulletData in networkData.BulletsData)
                 {
-                    Bullet bullet = _gameManager.CreateNewAmmo(networkData.BulletData);
-                    if (NetworkPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight)
-                    {
-                        _gameManager.FirstPlayerAmmo.Add(bullet);
-                    }
-                    else
-                    {
-                        _gameManager.SecondPlayerAmmo.Add(bullet);
-                    }
+                    Bullet bullet = _gameManager.CreateNewAmmo(bulletData);
+                    CurrentBullets.Add(bullet);
                 }
             }
             catch (Exception ex)
@@ -121,6 +114,7 @@ namespace DirigibleBattle.Managers
                 Console.WriteLine($"Error in OnGetNetworkData: {ex.Message}");
             }
         }
+
 
 
         public async Task UpdateNetworkData()
@@ -131,25 +125,28 @@ namespace DirigibleBattle.Managers
                 _currentNetworkData.PositionX = positionCenter.X;
                 _currentNetworkData.PositionY = positionCenter.Y;
 
-                // Передача данных пули
-                _currentNetworkData.BulletData = _bulletData;
-
-                _currentNetworkData.Health = CurrentPlayer.Health;
-                _currentNetworkData.Armor = CurrentPlayer.Armor;
-                _currentNetworkData.Fuel = CurrentPlayer.Fuel;
-                _currentNetworkData.Ammo = CurrentPlayer.Ammo;
-                _currentNetworkData.Speed = CurrentPlayer.Speed;
-                _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
+                // Обновляем список BulletData
+                _currentNetworkData.BulletsData.Clear();
+                foreach (var bullet in CurrentBullets)
+                {
+                    _currentNetworkData.BulletsData.Add(new BulletData
+                    {/*
+                        ID = bullet.ID,*/
+                        PositionX = bullet.PositionCenter.X,
+                        PositionY = bullet.PositionCenter.Y,
+                        /*IsLeft = bullet.IsLeft,
+                        BulletType = bullet.BulletType*/
+                    });
+                }
 
                 await _handler.UpdateData(_currentNetworkData);
-
-                _wasAmmoChanged = false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in UpdateNetworkData: {ex.Message}");
+                Console.WriteLine($"Error in UpdateNetworkDataAsync: {ex.Message}");
             }
         }
+
 
 
         public async void StartServer()
