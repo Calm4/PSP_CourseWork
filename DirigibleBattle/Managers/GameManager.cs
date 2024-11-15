@@ -85,8 +85,8 @@ namespace DirigibleBattle.Managers
             _uiManager.GameStateCheck();
 
             // Обработка повреждений игроков
-            CheckPlayerDamage(FirstPlayerAmmo, ref SecondPlayer);
-            CheckPlayerDamage(SecondPlayerAmmo, ref FirstPlayer);
+            CheckPlayerDamage(networkManager, FirstPlayerAmmo, ref SecondPlayer);
+            CheckPlayerDamage(networkManager, SecondPlayerAmmo, ref FirstPlayer);
 
             // Применение призов
             ApplyPrize(networkManager, PrizeList, ref FirstPlayer);
@@ -180,14 +180,17 @@ namespace DirigibleBattle.Managers
                 {
                     if (playerFireCommon)
                     {
+                        Console.WriteLine("CommonBullet!");
                         bulletsList.Add(new CommonBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
                     }
                     if (playerFireFast)
                     {
+                        Console.WriteLine("FastBullet!");
                         bulletsList.Add(new FastBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
                     }
                     if (playerFireHeavy)
                     {
+                        Console.WriteLine("HeaveBullet!");
                         bulletsList.Add(new HeavyBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
                     }
                     player.Ammo--;
@@ -258,7 +261,7 @@ namespace DirigibleBattle.Managers
             }
         }
 
-        public void CheckPlayerDamage(List<Bullet> bulletList, ref AbstractDirigible player)
+        public void CheckPlayerDamage(NetworkManager networkManager, List<Bullet> bulletList, ref AbstractDirigible player)
         {
             for (int i = bulletList.Count - 1; i >= 0; i--)
             {

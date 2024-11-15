@@ -6,13 +6,10 @@ using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TcpConnectionLibrary;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace DirigibleBattle.Managers
 {
@@ -106,7 +103,7 @@ namespace DirigibleBattle.Managers
 
                 if (bulletData == null)
                 {
-                    Console.WriteLine("Bullet data is NULL!");
+                    //Console.WriteLine("Bullet data is NULL!");
                     return;
                 }
 

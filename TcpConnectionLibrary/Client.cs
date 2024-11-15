@@ -51,7 +51,7 @@ namespace TcpConnectionLibrary
                 await Task.Run(() =>
                 {
                     _socket.Send(requestData);
-                    Console.WriteLine($"Request sent to server: {requestJson}");
+                    //Console.WriteLine($"Request sent to server: {requestJson}");
                 });
 
                 // Получаем ответ от сервера
@@ -65,7 +65,7 @@ namespace TcpConnectionLibrary
                 }
 
                 var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-                Console.WriteLine($"Received data: {resultText}");
+                //Console.WriteLine($"Received data: {resultText}");
 
                 var result = JsonConvert.DeserializeObject<T>(resultText);
                 OnGetData?.Invoke(result);
@@ -90,7 +90,7 @@ namespace TcpConnectionLibrary
             await Task.Run(() =>
             {
                 _socket.Send(data);
-                Console.WriteLine("Data sent to server");
+                //Console.WriteLine("Data sent to server");
             });
 
             // Получение ответа от сервера

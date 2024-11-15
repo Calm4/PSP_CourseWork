@@ -36,7 +36,7 @@ namespace TcpConnectionLibrary
         {
             await Task.Run(() =>
             {
-                Console.WriteLine("Start receiving data");
+                //Console.WriteLine("Start receiving data");
 
                 var buffer = new byte[1024];
                 int bytesReceived = _clientSocket.Receive(buffer);
@@ -47,14 +47,14 @@ namespace TcpConnectionLibrary
                 try
                 {
                     var request = JsonConvert.DeserializeObject<T>(requestText);
-                    Console.WriteLine("Request received");
+                    //Console.WriteLine("Request received");
 
                     // Отправляем ответ клиенту
                     var dataText = JsonConvert.SerializeObject(obj);
                     byte[] data = Encoding.UTF8.GetBytes(dataText);
                     _clientSocket.Send(data);
 
-                    Console.WriteLine("Data sent to client");
+                    //Console.WriteLine("Data sent to client");
                     OnGetData?.Invoke(request);
                 }
                 catch (Exception ex)
