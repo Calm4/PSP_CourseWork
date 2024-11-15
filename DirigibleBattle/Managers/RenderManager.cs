@@ -10,10 +10,12 @@ namespace DirigibleBattle.Managers
     public class RenderManager
     {
         private GameManager _gameManager;
+        private NetworkManager _networkManager;
 
-        public RenderManager(GameManager gameManager)
+        public RenderManager(GameManager gameManager,NetworkManager networkManager)
         {
             _gameManager = gameManager;
+            _networkManager = networkManager;
         }
 
         public void GlControl_Render(TimeSpan obj)
@@ -36,11 +38,11 @@ namespace DirigibleBattle.Managers
             _gameManager.FirstPlayer.Render();
             _gameManager.SecondPlayer.Render();
 
-            foreach (Bullet bullet in _gameManager.FirstPlayerAmmo)
+            foreach (Bullet bullet in _networkManager._firstPlayerBulletList)
             {
                 bullet.Render();
             }
-            foreach (Bullet bullet in _gameManager.SecondPlayerAmmo)
+            foreach (Bullet bullet in _networkManager._firstPlayerBulletList)
             {
                 bullet.Render();
             }

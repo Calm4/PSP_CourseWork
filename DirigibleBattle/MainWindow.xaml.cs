@@ -22,10 +22,10 @@ namespace DirigibleBattle
             _uiManager = new UIManager(ServerButton, ClientButton, IpAddressInput, GameOverLabel, firstPlayerInfo, secondPlayerInfo);
             _gameManager = new GameManager(glControl,_uiManager);
 
-            _renderManager = new RenderManager(_gameManager);
             _timeManager = new TimeManager(_gameManager);
             _networkManager = new NetworkManager(_gameManager, _uiManager, _timeManager);
 
+            _renderManager = new RenderManager(_gameManager, _networkManager);
 
             _uiManager.DisplayLocalIPAddress(IpAddressLabel, IpAddressInput);
 

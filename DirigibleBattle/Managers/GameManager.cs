@@ -1,4 +1,4 @@
-﻿﻿using AmmunitionLibrary;
+﻿using AmmunitionLibrary;
 using GameLibrary;
 using GameLibrary.Dirigible;
 using GameLibrary.DirigibleDecorators;
@@ -21,9 +21,6 @@ namespace DirigibleBattle.Managers
     {
         public AbstractDirigible FirstPlayer;
         public AbstractDirigible SecondPlayer;
-
-        public List<Bullet> FirstPlayerAmmo;
-        public List<Bullet> SecondPlayerAmmo;
 
         public List<Prize> PrizeList;
 
@@ -85,8 +82,8 @@ namespace DirigibleBattle.Managers
             _uiManager.GameStateCheck();
 
             // Обработка повреждений игроков
-            CheckPlayerDamage(FirstPlayerAmmo, ref SecondPlayer);
-            CheckPlayerDamage(SecondPlayerAmmo, ref FirstPlayer);
+            CheckPlayerDamage(networkManager._firstPlayerBulletList, ref SecondPlayer);
+            CheckPlayerDamage(networkManager._secondPlayerBulletList, ref FirstPlayer);
 
             // Применение призов
             ApplyPrize(networkManager, PrizeList, ref FirstPlayer);
@@ -139,8 +136,7 @@ namespace DirigibleBattle.Managers
         {
             FirstPlayer = new BasicDirigible(new Vector2(-0.6f, -0.4f), TextureManager.firstDirigibleTextureRight);
             SecondPlayer = new BasicDirigible(new Vector2(0.5f, 0f), TextureManager.secondDirigibleTextureLeft);
-            FirstPlayerAmmo = new List<Bullet>();
-            SecondPlayerAmmo = new List<Bullet>();
+
             PrizeList = new List<Prize>();
         }
 
@@ -172,13 +168,21 @@ namespace DirigibleBattle.Managers
             bool playerFireFast = keyboardState.IsKeyDown(keys[1]);
             bool playerFireHeavy = keyboardState.IsKeyDown(keys[2]);
 
-            if (playerFireCommon || playerFireFast || playerFireHeavy)
+            /*Console.WriteLine(playerFireCommon + " playerFireCommon");
+            Console.WriteLine(playerFireFast + " playerFireFast");
+            Console.WriteLine(playerFireHeavy + " playerFireHeavy");*/
+
+            if ((playerFireCommon || playerFireFast || playerFireHeavy) && currentPlayerTicks >= 50)
             {
+                currentPlayerTicks = 0;
+                Console.WriteLine("1");
                 if (networkManager.CurrentPlayer.Ammo > 0)
                 {
+                    Console.WriteLine("2");
                     Bullet bullet = null;
                     if (playerFireCommon)
                     {
+                        Console.WriteLine("3");
                         bullet = new CommonBullet(networkManager.CurrentPlayer.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, networkManager.CurrentPlayer.DirigibleID == TextureManager.firstDirigibleTextureRight);
                     }
                     if (playerFireFast)
@@ -242,7 +246,7 @@ namespace DirigibleBattle.Managers
 
             bool wasPlayerFirePressed = (networkManager.CurrentPlayer == FirstPlayer) ? wasFirstPlayerFirePressed : wasSecondPlayerFirePressed;
 
-            
+
             if (!wasPlayerFirePressed && (playerFireCommon || playerFireFast || playerFireHeavy))
             {
                 if (networkManager.CurrentPlayer.Ammo > 0)
