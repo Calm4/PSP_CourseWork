@@ -6,13 +6,10 @@ using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using TcpConnectionLibrary;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace DirigibleBattle.Managers
 {
@@ -20,6 +17,9 @@ namespace DirigibleBattle.Managers
     {
         private AbstractDirigible _firstPlayer;
         private AbstractDirigible _secondPlayer;
+
+        private List<Bullet> _firstPlayerBulletList;
+        private List<Bullet> _secondPlayerBulletList;
 
         public AbstractDirigible CurrentPlayer { get; set; }
         public AbstractDirigible NetworkPlayer { get; set; }
@@ -33,11 +33,7 @@ namespace DirigibleBattle.Managers
         private Server _server;
 
         private NetworkData _currentNetworkData = new NetworkData();
-        private BulletData _bulletData;
-
-        private List<Bullet> _firstAmmos;
-
-        private List<Bullet> _secondAmmos;
+        public BulletData BulletData;
 
         public PrizeFactory PrizeFactory { get; set; }
 
@@ -75,8 +71,6 @@ namespace DirigibleBattle.Managers
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
-
-
             _firstPlayer.SetRandom(random);
             _secondPlayer.SetRandom(random);
 
@@ -97,24 +91,21 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.Ammo = networkData.Ammo;
                 NetworkPlayer.Speed = networkData.Speed;
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
-
-
+                
                 var bulletData = networkData.BulletData;
 
-
-                if (bulletData == null)
+                if(bulletData == null)
                 {
-                    Console.WriteLine("Bullet data is NULL!");
                     return;
                 }
 
-                if (CurrentPlayer == _firstPlayer)
+                if(CurrentPlayer == _firstPlayer)
                 {
-                    _secondAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
+                    _secondPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
                 }
                 else
                 {
-                    _firstAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
+                    _firstPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
                 }
             }
             catch (Exception ex)
@@ -131,7 +122,7 @@ namespace DirigibleBattle.Managers
                 _currentNetworkData.PositionX = positionCenter.X;
                 _currentNetworkData.PositionY = positionCenter.Y;
 
-                _currentNetworkData.BulletData = _bulletData;
+                _currentNetworkData.BulletData = BulletData;
 
                 _currentNetworkData.Health = CurrentPlayer.Health;
                 _currentNetworkData.Armor = CurrentPlayer.Armor;
@@ -143,7 +134,8 @@ namespace DirigibleBattle.Managers
 
                 await _handler.UpdateData(_currentNetworkData);
 
-                _bulletData = null;
+                BulletData = null;
+
             }
             catch (Exception ex)
             {

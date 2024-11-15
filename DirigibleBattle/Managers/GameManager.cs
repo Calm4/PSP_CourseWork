@@ -93,8 +93,8 @@ namespace DirigibleBattle.Managers
             ApplyPrize(networkManager, PrizeList, ref SecondPlayer);
 
             // Управление стрельбой игроками
-            PlayerShootControl(CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
-            PlayerShootControl(CurrentPlayerFire2, SecondPlayerAmmo, ref SecondPlayer);
+            PlayerShootControl(networkManager, CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
+            PlayerShootControl(networkManager, CurrentPlayerFire, SecondPlayerAmmo, ref SecondPlayer);
 
             // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
@@ -164,7 +164,7 @@ namespace DirigibleBattle.Managers
             return bullet;
         }
 
-        public void PlayerShootControl(List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)
+        public void PlayerShootControl(NetworkManager networkManager, List<OpenTK.Input.Key> keys, List<Bullet> bulletsList, ref AbstractDirigible player)
         {
             keyboardState = OpenTK.Input.Keyboard.GetState();
 
@@ -178,18 +178,30 @@ namespace DirigibleBattle.Managers
             {
                 if (player.Ammo > 0)
                 {
+                    Bullet bullet = null;
                     if (playerFireCommon)
                     {
-                        bulletsList.Add(new CommonBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
+                        bullet = new CommonBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.commonBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bulletsList.Add(bullet);
                     }
                     if (playerFireFast)
                     {
-                        bulletsList.Add(new FastBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
+                        bullet = new FastBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.fastBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bulletsList.Add(bullet);
                     }
                     if (playerFireHeavy)
                     {
-                        bulletsList.Add(new HeavyBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight));
+                        bullet = new HeavyBullet(player.GetGunPosition() - new Vector2(0f, -0.05f), TextureManager.heavyBulletTexture, player.DirigibleID == TextureManager.firstDirigibleTextureRight);
+                        bulletsList.Add(bullet);
                     }
+
+                    networkManager.BulletData = new BulletData()
+                    {
+                        PositionX = bullet.PositionCenter.X,
+                        PositionY = bullet.PositionCenter.Y,
+
+                    };
+
                     player.Ammo--;
                 }
                 if (player == FirstPlayer)
