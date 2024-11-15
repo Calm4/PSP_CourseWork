@@ -24,6 +24,11 @@ namespace DirigibleBattle.Managers
 
         public List<Prize> CurrentPrizeList;
 
+        public List<Bullet> CurrentBullets;
+        public Bullet CurrentBullet;
+
+        public BulletData BulletData;
+
         private ITcpConnectionHandler _handler;
 
         private Client _client;
@@ -98,7 +103,7 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
 
 
-                var bulletData = networkData.BulletData;
+                var bulletData = BulletData;
 
 
                 if (bulletData == null)
@@ -107,14 +112,9 @@ namespace DirigibleBattle.Managers
                     return;
                 }
 
-                if (CurrentPlayer == _firstPlayer)
-                {
-                    _secondAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
-                }
-                else
-                {
-                    _firstAmmos.Add(_gameManager.CreateNewAmmo(bulletData));
-                }
+                
+
+
             }
             catch (Exception ex)
             {
