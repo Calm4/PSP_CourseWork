@@ -99,14 +99,18 @@ namespace DirigibleBattle.Managers
                     return;
                 }
 
-                if(CurrentPlayer == _firstPlayer)
+                if (bulletData.ShooterID != CurrentPlayer.DirigibleID)
                 {
-                    _secondPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
+                    if (CurrentPlayer == _firstPlayer)
+                    {
+                        _secondPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
+                    }
+                    else
+                    {
+                        _firstPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
+                    }
                 }
-                else
-                {
-                    _firstPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
-                }
+
             }
             catch (Exception ex)
             {

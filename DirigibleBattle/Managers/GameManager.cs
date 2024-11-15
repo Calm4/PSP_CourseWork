@@ -206,6 +206,7 @@ namespace DirigibleBattle.Managers
 
                     networkManager.BulletData = new BulletData()
                     {
+                        ShooterID = networkManager.CurrentPlayer.DirigibleID,
                         PositionX = bullet.PositionCenter.X,
                         PositionY = bullet.PositionCenter.Y,
                         IsLeft = bullet.Direction.X > 0,
