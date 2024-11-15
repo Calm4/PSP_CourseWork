@@ -140,25 +140,25 @@ namespace DirigibleBattle.Managers
             PrizeList = new List<Prize>();
         }
 
-        public Bullet CreateNewAmmo(BulletData bulletData, AbstractDirigible owner)
+        public Bullet CreateNewAmmo(BulletData bulletData)
         {
             Bullet bullet = null;
             switch (bulletData.BulletType)
             {
                 case 0:
-                    bullet = new CommonBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.commonBulletTexture, bulletData.IsLeft, owner);
+                    bullet = new CommonBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.commonBulletTexture, bulletData.IsLeft);
                     break;
                 case 1:
-                    bullet = new FastBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.fastBulletTexture, bulletData.IsLeft, owner);
+                    bullet = new FastBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.fastBulletTexture, bulletData.IsLeft);
                     break;
                 case 2:
-                    bullet = new HeavyBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.heavyBulletTexture, bulletData.IsLeft, owner);
+                    bullet = new HeavyBullet(new Vector2(bulletData.PositionX, bulletData.PositionY), TextureManager.heavyBulletTexture, bulletData.IsLeft);
+
                     break;
             }
 
             return bullet;
         }
-
 
         public void PlayerShoot(NetworkManager networkManager, List<Key> keys)
         {
