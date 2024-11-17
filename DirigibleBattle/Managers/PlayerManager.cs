@@ -11,7 +11,7 @@ using GameLibrary.Dirigible;
 
 namespace DirigibleBattle.Managers
 {
-    public class PlayerManager
+    public class PlayerManager : IGameObjectManager
     {
         private KeyboardState keyboardState;
         private NetworkManager networkManager;

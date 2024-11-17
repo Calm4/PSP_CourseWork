@@ -15,6 +15,8 @@ namespace DirigibleBattle.Managers
         DispatcherTimer windTimer;
 
         private GameManager _gameManager;
+        private PrizeManager _prizeManager;
+        private WindManager _windManager;
 
         private Random random;
         private PrizeFactory prizeFactory;
@@ -25,12 +27,14 @@ namespace DirigibleBattle.Managers
         private int windTimerTicks = 50;
 
 
-        public TimeManager(GameManager gameManager)
+        public TimeManager(GameManager gameManager, PrizeManager prizeManager, WindManager windManager)
         {
             random = new Random();
             prizeFactory = new PrizeFactory(random);
             
             _gameManager = gameManager;
+            _prizeManager = prizeManager;
+            _windManager = windManager;
         }
 
         public void LaunchTimers(NetworkManager networkManager)
@@ -42,7 +46,7 @@ namespace DirigibleBattle.Managers
             Console.WriteLine("Game timer initialized");
 
             prizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25.0) };
-            prizeTimer.Tick += (sender, e) => _gameManager.PrizeTimer_Tick(networkManager, sender, e);
+            prizeTimer.Tick += _prizeManager.PrizeTimer_Tick;
             Console.WriteLine("Prize timer initialized");
 
             windTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(25.0) };
@@ -86,7 +90,7 @@ namespace DirigibleBattle.Managers
                 windCounter = 0;
                 windTimerTicks = random.Next(100, 301);
             }
-            _gameManager.WindDirection();
+            _windManager.WindDirection();
         }
 
         

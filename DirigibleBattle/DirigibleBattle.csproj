@@ -73,8 +73,10 @@
     </ApplicationDefinition>
     <Compile Include="Managers\ColliderManager.cs" />
     <Compile Include="Managers\GameManager.cs" />
+    <Compile Include="Managers\IGameObjectManager.cs" />
     <Compile Include="Managers\NetworkManager.cs" />
     <Compile Include="Managers\PlayerManager.cs" />
+    <Compile Include="Managers\PrizeManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />
     <Compile Include="Managers\TextureManager.cs" />
     <Compile Include="Managers\TimeManager.cs" />
@@ -93,6 +95,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Managers\WindManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
