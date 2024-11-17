@@ -8,6 +8,7 @@ namespace DirigibleBattle
 {
     public partial class MainWindow
     {
+        private PlayerManager _playerManager;
         private GameManager _gameManager;
         private UIManager _uiManager;
         private RenderManager _renderManager;
@@ -20,10 +21,12 @@ namespace DirigibleBattle
             InitializeComponent();
 
             _uiManager = new UIManager(ServerButton, ClientButton, IpAddressInput, GameOverLabel, firstPlayerInfo, secondPlayerInfo);
-            _gameManager = new GameManager(glControl,_uiManager);
-
+            _playerManager = new PlayerManager();
+            _gameManager = new GameManager(glControl,_uiManager, _playerManager);
             _timeManager = new TimeManager(_gameManager);
-            _networkManager = new NetworkManager(_gameManager, _uiManager, _timeManager);
+
+            _networkManager = new NetworkManager(_gameManager, _uiManager, _timeManager, _playerManager);
+            _playerManager.SetManagers(_networkManager, _gameManager);
 
             _renderManager = new RenderManager(_gameManager, _networkManager);
 

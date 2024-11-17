@@ -40,14 +40,16 @@ namespace DirigibleBattle.Managers
         private GameManager _gameManager;
         private UIManager _uiManager;
         private TimeManager _timeManager;
+        private PlayerManager _playerManager;
 
         private Random random;
 
-        public NetworkManager(GameManager gameManager, UIManager uiManager, TimeManager timeManager)
+        public NetworkManager(GameManager gameManager, UIManager uiManager, TimeManager timeManager, PlayerManager playerManager)
         {
             _gameManager = gameManager;
             _uiManager = uiManager;
             _timeManager = timeManager;
+            _playerManager = playerManager;
         }
 
         public void SetNetworkStartData(ITcpConnectionHandler networkHandler, bool isLeftPlayer, int seed)
@@ -83,6 +85,7 @@ namespace DirigibleBattle.Managers
             {
                 NetworkData networkData = (NetworkData)obj;
 
+                // Обновляем данные для сетевого игрока
                 NetworkPlayer.PositionCenter = new Vector2(networkData.PositionX, networkData.PositionY);
 
                 NetworkPlayer.Health = networkData.Health;
@@ -91,14 +94,29 @@ namespace DirigibleBattle.Managers
                 NetworkPlayer.Ammo = networkData.Ammo;
                 NetworkPlayer.Speed = networkData.Speed;
                 NetworkPlayer.NumberOfPrizesReceived = networkData.NumberOfPrizesReceived;
-                
+                NetworkPlayer.IsTurnedLeft = networkData.IsTurningLeft;
+
+                // Обновляем текстуру сетевого игрока в зависимости от поворота
+
+                if (CurrentPlayer == _firstPlayer)
+                {
+                    _playerManager.UpdatePlayerTexture();
+
+                }
+                else
+                {
+                    _playerManager.UpdatePlayerTexture();
+                }
+
+
                 var bulletData = networkData.BulletData;
 
-                if(bulletData == null)
+                if (bulletData == null)
                 {
                     return;
                 }
 
+                // Создание и добавление пули, если это другая сторона
                 if (bulletData.ShooterID != CurrentPlayer.DirigibleID)
                 {
                     if (CurrentPlayer == _firstPlayer)
@@ -118,6 +136,7 @@ namespace DirigibleBattle.Managers
             }
         }
 
+
         public async Task UpdateNetworkData()
         {
             try
@@ -134,18 +153,18 @@ namespace DirigibleBattle.Managers
                 _currentNetworkData.Ammo = CurrentPlayer.Ammo;
                 _currentNetworkData.Speed = CurrentPlayer.Speed;
                 _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
-
+                _currentNetworkData.IsTurningLeft = CurrentPlayer.IsTurnedLeft;
 
                 await _handler.UpdateData(_currentNetworkData);
 
                 BulletData = null;
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in UpdateNetworkDataAsync: {ex.Message}");
             }
         }
+
 
         public async void StartServer()
         {

@@ -74,6 +74,7 @@
     <Compile Include="Managers\ColliderManager.cs" />
     <Compile Include="Managers\GameManager.cs" />
     <Compile Include="Managers\NetworkManager.cs" />
+    <Compile Include="Managers\PlayerManager.cs" />
     <Compile Include="Managers\RenderManager.cs" />
     <Compile Include="Managers\TextureManager.cs" />
     <Compile Include="Managers\TimeManager.cs" />

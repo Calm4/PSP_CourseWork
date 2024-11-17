@@ -77,48 +77,7 @@ namespace GameLibrary.Dirigible
         /// </summary>
         public override int DirigibleID { get; set; }
         public override int NumberOfPrizesReceived { get; set; }
-
-        /// <summary>
-        /// Управление дирижаблем
-        /// </summary>
-        /// <param name="keys">Список кнопок</param>
-        /// <param name="textureIdLeft">Текстура дирижабля смотрящая влево</param>
-        /// <param name="textureIdRight">Текстура дирижабля смотрящая вправо</param>
-        /// <param name="playArea">Область игрового поля</param>
-        public override void Control(List<Key> keys, int textureIdLeft, int textureIdRight, RectangleF playArea)
-        {
-            // W S A D
-            // Вверх Низ Лево Право
-            KeyboardState keyboardState = Keyboard.GetState();
-            Vector2 moveVectorFirstPlayer = Vector2.Zero;
-
-            if (keyboardState.IsKeyDown(keys[0]) && (GetCollider().Y < playArea.Width - playArea.Y))
-            {
-                moveVectorFirstPlayer += new Vector2(0f, -0.001f);
-            }
-            if (keyboardState.IsKeyDown(keys[1]))
-            {
-                moveVectorFirstPlayer += new Vector2(0f, 0.001f);
-            }
-
-            if (keyboardState.IsKeyDown(keys[2]) && (GetCollider().X > playArea.X))
-            {
-                DirigibleID = textureIdLeft;
-                moveVectorFirstPlayer += new Vector2(-0.001f, 0f);
-            }
-
-            if (keyboardState.IsKeyDown(keys[3]) && (GetCollider().X < playArea.Width - 0.1f))
-            {
-                DirigibleID = textureIdRight;
-                moveVectorFirstPlayer += new Vector2(0.001f, 0f);
-
-            }
-            if (moveVectorFirstPlayer != Vector2.Zero)
-            {
-                moveVectorFirstPlayer = Vector2.Normalize(moveVectorFirstPlayer) * Speed;
-            }
-            Move(moveVectorFirstPlayer);
-        }
+        public override bool IsTurnedLeft { get; set; }
 
         /// <summary>
         /// Получить позицию пушки

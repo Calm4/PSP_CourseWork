@@ -12,6 +12,8 @@
         public float Speed;
         public int NumberOfPrizesReceived;
 
+        public bool IsTurningLeft;
+
         public BulletData BulletData;
     }
 

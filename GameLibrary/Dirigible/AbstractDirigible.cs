@@ -25,6 +25,8 @@ namespace GameLibrary.Dirigible
         public abstract float Speed { get; set; }
         public abstract int NumberOfPrizesReceived {  get; set; }
 
+        public abstract bool IsTurnedLeft { get; set;}
+
         private Random random;
 
 
@@ -32,7 +34,7 @@ namespace GameLibrary.Dirigible
         public abstract void ChangeDirectionWithWind(Vector2 newWindSpeed);
         public abstract void ChangeWindDirection(bool turnOver);
 
-        public abstract void Control(List<Key> keys, int textureIdLeft, int textureIdRight, RectangleF checkPlayArea);
+       /* public abstract void Control(List<Key> keys, int textureIdLeft, int textureIdRight, RectangleF checkPlayArea);*/
         public abstract Vector2 GetGunPosition();
         public abstract void Move(Vector2 movement);
         public abstract void Idle();

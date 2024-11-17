@@ -81,6 +81,12 @@ namespace GameLibrary.DirigibleDecorators
             set { _dirigible.NumberOfPrizesReceived = value; }
         }
 
+        public override bool IsTurnedLeft
+        {
+            get { return _dirigible.IsTurnedLeft; }
+            set { _dirigible.IsTurnedLeft = value; }
+        }
+
         /// <summary>
         /// Получение урона
         /// </summary>
@@ -114,10 +120,10 @@ namespace GameLibrary.DirigibleDecorators
         /// <param name="textureIdLeft">Текстура дирижабля смотрящая влево</param>
         /// <param name="textureIdRight">Текстура дирижабля смотрящая вправо</param>
         /// <param name="checkPlayArea"></param>
-        public override void Control(List<Key> keys, int textureIdLeft, int textureIdRight, RectangleF checkPlayArea)
+        /*public override void Control(List<Key> keys, int textureIdLeft, int textureIdRight, RectangleF checkPlayArea)
         {
             _dirigible.Control(keys, textureIdLeft, textureIdRight, checkPlayArea);
-        }
+        }*/
         /// <summary>
         /// Получает позицию пушки
         /// </summary>
