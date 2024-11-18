@@ -15,9 +15,6 @@ namespace DirigibleBattle.Managers
 {
     public class NetworkManager
     {
-        private AbstractDirigible _firstPlayer;
-        private AbstractDirigible _secondPlayer;
-
         public List<Bullet> _firstPlayerBulletList = new List<Bullet>();
         public List<Bullet> _secondPlayerBulletList = new List<Bullet>();
 
@@ -55,26 +52,24 @@ namespace DirigibleBattle.Managers
         public void SetNetworkStartData(ITcpConnectionHandler networkHandler, bool isLeftPlayer, int seed)
         {
             _handler = networkHandler;
-            _firstPlayer = _gameManager.FirstPlayer;
-            _secondPlayer = _gameManager.SecondPlayer;
 
             if (isLeftPlayer)
             {
-                CurrentPlayer = _firstPlayer;
-                NetworkPlayer = _secondPlayer;
+                CurrentPlayer = _gameManager.FirstPlayer;
+                NetworkPlayer = _gameManager.SecondPlayer;
             }
             else
             {
-                CurrentPlayer = _secondPlayer;
-                NetworkPlayer = _firstPlayer;
+                CurrentPlayer = _gameManager.SecondPlayer;
+                NetworkPlayer = _gameManager.FirstPlayer;
             }
             CurrentPrizeList = _gameManager.PrizeList;
 
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
-            _firstPlayer.SetRandom(random);
-            _secondPlayer.SetRandom(random);
+            _gameManager.FirstPlayer.SetRandom(random);
+            _gameManager.SecondPlayer.SetRandom(random);
 
             _handler.OnGetData += OnGetNetworkData;
         }
@@ -98,7 +93,7 @@ namespace DirigibleBattle.Managers
 
                 // Обновляем текстуру сетевого игрока в зависимости от поворота
 
-                if (CurrentPlayer == _firstPlayer)
+                if (CurrentPlayer == _gameManager.FirstPlayer)
                 {
                     _playerManager.UpdatePlayerTexture();
 
@@ -119,7 +114,7 @@ namespace DirigibleBattle.Managers
                 // Создание и добавление пули, если это другая сторона
                 if (bulletData.ShooterID != CurrentPlayer.DirigibleID)
                 {
-                    if (CurrentPlayer == _firstPlayer)
+                    if (CurrentPlayer == _gameManager.FirstPlayer)
                     {
                         _secondPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
                     }
