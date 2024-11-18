@@ -44,8 +44,8 @@ namespace TcpConnectionLibrary
 
                 //Console.WriteLine($"Received raw data: '{requestText}'");
 
-                try
-                {
+               /* try
+                {*/
                     var request = JsonConvert.DeserializeObject<T>(requestText);
                     //Console.WriteLine("Request received");
 
@@ -56,11 +56,11 @@ namespace TcpConnectionLibrary
 
                     //Console.WriteLine("Data sent to client");
                     OnGetData?.Invoke(request);
-                }
+                /*}
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Deserialization error: {ex.Message}");
-                }
+                }*/
             });
         }
 

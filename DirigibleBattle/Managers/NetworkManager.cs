@@ -135,30 +135,24 @@ namespace DirigibleBattle.Managers
 
         public async Task UpdateNetworkData()
         {
-            try
-            {
-                var positionCenter = CurrentPlayer.PositionCenter;
-                _currentNetworkData.PositionX = positionCenter.X;
-                _currentNetworkData.PositionY = positionCenter.Y;
 
-                _currentNetworkData.BulletData = BulletData;
+            var positionCenter = CurrentPlayer.PositionCenter;
+            _currentNetworkData.PositionX = positionCenter.X;
+            _currentNetworkData.PositionY = positionCenter.Y;
 
-                _currentNetworkData.Health = CurrentPlayer.Health;
-                _currentNetworkData.Armor = CurrentPlayer.Armor;
-                _currentNetworkData.Fuel = CurrentPlayer.Fuel;
-                _currentNetworkData.Ammo = CurrentPlayer.Ammo;
-                _currentNetworkData.Speed = CurrentPlayer.Speed;
-                _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
-                _currentNetworkData.IsTurningLeft = CurrentPlayer.IsTurnedLeft;
+            _currentNetworkData.BulletData = BulletData;
 
-                await _handler.UpdateData(_currentNetworkData);
+            _currentNetworkData.Health = CurrentPlayer.Health;
+            _currentNetworkData.Armor = CurrentPlayer.Armor;
+            _currentNetworkData.Fuel = CurrentPlayer.Fuel;
+            _currentNetworkData.Ammo = CurrentPlayer.Ammo;
+            _currentNetworkData.Speed = CurrentPlayer.Speed;
+            _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
+            _currentNetworkData.IsTurningLeft = CurrentPlayer.IsTurnedLeft;
 
-                BulletData = null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in UpdateNetworkDataAsync: {ex.Message}");
-            }
+            await _handler.UpdateData(_currentNetworkData);
+
+            BulletData = null;
         }
 
 
