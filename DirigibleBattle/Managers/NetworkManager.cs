@@ -68,9 +68,6 @@ namespace DirigibleBattle.Managers
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
-            _gameManager.FirstPlayer.SetRandom(random);
-            _gameManager.SecondPlayer.SetRandom(random);
-
             _handler.OnGetData += OnGetNetworkData;
         }
 
@@ -122,6 +119,10 @@ namespace DirigibleBattle.Managers
                     {
                         _firstPlayerBulletList.Add(_gameManager.CreateNewAmmo(bulletData));
                     }
+                }
+                else
+                {
+                    Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                 }
 
             }

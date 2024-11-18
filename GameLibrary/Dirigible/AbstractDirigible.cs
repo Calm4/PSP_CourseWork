@@ -27,8 +27,11 @@ namespace GameLibrary.Dirigible
 
         public abstract bool IsTurnedLeft { get; set;}
 
-        private Random random;
-
+        private const int _maxAmmo = 30;
+        private const int _maxArmor = 50;
+        private const int _maxFuel = 3000;
+        private const int _maxHealth = 200;
+        private const float _maxSpeed = 0.15f;
 
         public abstract void GetDamage(int damage);
         public abstract void ChangeDirectionWithWind(Vector2 newWindSpeed);
@@ -81,11 +84,6 @@ namespace GameLibrary.Dirigible
         public virtual void Render()
         {
             ObjectRenderer.RenderObjects(DirigibleID, GetPosition());
-        }
-
-        public void SetRandom(Random random)
-        {
-            this.random = random;
         }
     }
 }

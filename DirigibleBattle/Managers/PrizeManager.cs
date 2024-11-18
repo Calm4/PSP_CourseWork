@@ -12,6 +12,12 @@ namespace DirigibleBattle.Managers
         private NetworkManager networkManager;
         private GameManager gameManager;
 
+        private int maxHealth = 200;
+        private int maxArmor = 50;
+        private int maxFuel = 3000;
+        private int maxAmmo = 30;
+        private float maxSpeed = 0.15f;
+
         public PrizeManager()
         {
             _random = new Random();
@@ -54,36 +60,37 @@ namespace DirigibleBattle.Managers
                     if (networkManager.CurrentPrize.GetType().Equals(typeof(AmmoPrize)))
                     {
                         int ammoBoostCount = 5;
-                        player = new AmmoBoostDecorator(player, ammoBoostCount);
+                        player.Ammo = Math.Min(player.Ammo + ammoBoostCount, maxAmmo);
                         player.NumberOfPrizesReceived++;
                     }
                     if (networkManager.CurrentPrize.GetType().Equals(typeof(ArmorPrize)))
                     {
                         int armorBoostCount = 15;
-                        player = new ArmorBoostDecorator(player, armorBoostCount);
+                        player.Armor = Math.Min(player.Armor + armorBoostCount, maxArmor);
                         player.NumberOfPrizesReceived++;
                     }
                     if (networkManager.CurrentPrize.GetType().Equals(typeof(FuelPrize)))
                     {
                         int fuelBoostCount = 500;
-                        player = new FuelBoostDecorator(player, fuelBoostCount);
+                        player.Fuel = Math.Min(player.Fuel + fuelBoostCount, maxFuel);
                         player.NumberOfPrizesReceived++;
                     }
                     if (networkManager.CurrentPrize.GetType().Equals(typeof(HealthPrize)))
                     {
                         int healthBoostCount = 20;
-                        player = new HealthBoostDecorator(player, healthBoostCount);
+                        player.Health = Math.Min(player.Health + healthBoostCount, maxHealth);
                         player.NumberOfPrizesReceived++;
                     }
                     if (networkManager.CurrentPrize.GetType().Equals(typeof(SpeedBoostPrize)))
                     {
                         float speedBoostCount = 0.015f;
-                        player = new SpeedBoostDecorator(player, speedBoostCount);
+                        player.Speed = Math.Min(player.Speed + speedBoostCount, maxSpeed);
                         player.NumberOfPrizesReceived++;
                     }
                     prizeList.Remove(networkManager.CurrentPrize);
                     i--;
                 }
+
             }
         }
 

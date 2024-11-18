@@ -68,9 +68,8 @@ namespace DirigibleBattle.Managers
             _prizeManager.ApplyPrize(PrizeList, ref FirstPlayer);
             _prizeManager.ApplyPrize(PrizeList, ref SecondPlayer);
 
-            // Управление стрельбой игроками
-            //PlayerShootControl(networkManager, CurrentPlayerFire, FirstPlayerAmmo, ref FirstPlayer);
             _playerManager.PlayerShoot();
+            _uiManager.UpdatePlayerStats();
 
             // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
@@ -90,7 +89,6 @@ namespace DirigibleBattle.Managers
             _ = networkManager.UpdateNetworkData();
 
             // Обновление интерфейса
-            _uiManager.UpdatePlayerStats();
 
         }
 
@@ -130,6 +128,9 @@ namespace DirigibleBattle.Managers
 
                     break;
             }
+
+            Console.WriteLine($"Bullet created with damage: {bullet.Damage}");
+
 
             return bullet;
         }

@@ -4,46 +4,21 @@ using GameLibrary;
 
 namespace AmmunitionLibrary
 {
-    /// <summary>
-    /// Абстрактный класс пули
-    /// </summary>
     public abstract class Bullet
     {
-        /// <summary>
-        /// Урон который будет у пули
-        /// </summary>
         public abstract int Damage { get; set; }
-        /// <summary>
-        /// Скорость полета пули
-        /// </summary>        
         public abstract float Speed { get; set; }
-        /// <summary>
-        /// уникальное ID текстуры пули
-        /// </summary>
         protected int TextureID { get; set; }
 
-        /// <summary>
-        /// Позиция расположения пули
-        /// </summary>
         public Vector2 PositionCenter;
 
-        /// <summary>
-        /// Изменение направления пули через 
-        /// </summary>
         public Vector2 Direction;
 
 
-        /// <summary>
-        /// Стрельба в определенном направление
-        /// </summary>
         public virtual void Fire()
         {
             PositionCenter += Direction;
         }
-        /// <summary>
-        /// Получение коллайдера объекта пули 
-        /// </summary>
-        /// <returns></returns>
         public virtual RectangleF GetCollider()
         {
             Vector2[] colliderPosition = GetPosition();
@@ -57,10 +32,6 @@ namespace AmmunitionLibrary
 
             return collider;
         }
-        /// <summary>
-        /// Задание размера пули
-        /// </summary>
-        /// <returns></returns>
         public virtual Vector2[] GetPosition()
         {
             return new Vector2[4]
@@ -71,12 +42,6 @@ namespace AmmunitionLibrary
                 PositionCenter + new Vector2(-0.05f, 0.03f),
             };
         }
-        /// <summary>
-        /// Метод для преобразования координат в OpenGL
-        /// </summary>
-        /// <param name="pointX">Точка по оси X</param>
-        /// <param name="pointY">Точка по оси Y</param>
-        /// <returns></returns>
         protected static float[] Convert(float pointX, float pointY)
         {
             float centralPointX = 0.5f;
@@ -89,17 +54,9 @@ namespace AmmunitionLibrary
 
             return resultPoint;
         }
-        /// <summary>
-        /// Производит рендеринг текстуры
-        /// </summary>
         public virtual void Render()
         {
             ObjectRenderer.RenderObjects(TextureID, GetPosition());
         }
-
-       
-
-       
-
     }
 }
