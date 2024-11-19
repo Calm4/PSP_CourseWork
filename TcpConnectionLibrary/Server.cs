@@ -44,9 +44,13 @@ namespace TcpConnectionLibrary
 
                 //Console.WriteLine($"Received raw data: '{requestText}'");
 
-               /* try
-                {*/
+                /* try
+                 {*/
+                try
+                {
+                    Console.WriteLine("REQUEST TEXT:" + requestText);
                     var request = JsonConvert.DeserializeObject<T>(requestText);
+                    Console.WriteLine("REQUEST" + request);
                     //Console.WriteLine("Request received");
 
                     // Отправляем ответ клиенту
@@ -56,6 +60,15 @@ namespace TcpConnectionLibrary
 
                     //Console.WriteLine("Data sent to client");
                     OnGetData?.Invoke(request);
+
+                }
+                catch (Exception)
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine("ERROR: " + requestText);
+                    Console.BackgroundColor = ConsoleColor.White;
+                    throw;
+                }
                 /*}
                 catch (Exception ex)
                 {
