@@ -61,35 +61,37 @@ namespace DirigibleBattle.Managers
             }
         }
 
-        public void GameStateCheck()
+        public void GameStateCheck(MainWindow mainWindow)
         {
 
             if (_gameManager.FirstPlayer.GetCollider().IntersectsWith(_gameManager.SecondPlayer.GetCollider()))
             {
-                EndGame("НИЧЬЯ", _gameOverLabel);
+                EndGame("НИЧЬЯ", _gameOverLabel, mainWindow);
             }
             else if (ColliderManager.mountineCollider.IntersectsWith(_gameManager.FirstPlayer.GetCollider()))
             {
-                EndGame("ПОБЕДИЛ ИГРОК НА [СИНЕМ] ДИРИЖАБЛЕ\nИГРОК НА [КРАСНОМ] ВРЕЗАЛСЯ В ГОРУ", _gameOverLabel);
+                EndGame("ПОБЕДИЛ ИГРОК НА [СИНЕМ] ДИРИЖАБЛЕ\nИГРОК НА [КРАСНОМ] ВРЕЗАЛСЯ В ГОРУ", _gameOverLabel, mainWindow);
             }
             else if (_gameManager.FirstPlayer.Health <= 0)
             {
-                EndGame("ПОБЕДИЛ ИГРОК НА [СИНЕМ] ДИРИЖАБЛЕ", _gameOverLabel);
+                EndGame("ПОБЕДИЛ ИГРОК НА [СИНЕМ] ДИРИЖАБЛЕ", _gameOverLabel, mainWindow);
             }
             else if (ColliderManager.mountineCollider.IntersectsWith(_gameManager.SecondPlayer.GetCollider()))
             {
-                EndGame("ПОБЕДИЛ ИГРОК НА [КРАСНОМ] ДИРИЖАБЛЕ\nИГРОК НА [СИНЕМ] ВРЕЗАЛСЯ В ГОРУ", _gameOverLabel);
+                EndGame("ПОБЕДИЛ ИГРОК НА [КРАСНОМ] ДИРИЖАБЛЕ\nИГРОК НА [СИНЕМ] ВРЕЗАЛСЯ В ГОРУ", _gameOverLabel, mainWindow);
             }
             else if (_gameManager.SecondPlayer.Health <= 0)
             {
-                EndGame("ПОБЕДИЛ ИГРОК НА [КРАСНОМ] ДИРИЖАБЛЕ", _gameOverLabel);
+                EndGame("ПОБЕДИЛ ИГРОК НА [КРАСНОМ] ДИРИЖАБЛЕ", _gameOverLabel, mainWindow);
             }
         }
 
-        private void EndGame(string resultMessage, Label gameOverLabel)
+        private void EndGame(string resultMessage, Label gameOverLabel, MainWindow mainWindow)
         {
-            gameOverLabel.Content = resultMessage;
+            //gameOverLabel.Content = resultMessage;
             gameOverLabel.Visibility = Visibility.Visible;
+            mainWindow.Close();
+            MessageBox.Show(resultMessage);
         }
 
         public void UpdatePlayerStats()

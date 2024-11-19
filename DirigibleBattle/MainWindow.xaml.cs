@@ -28,7 +28,7 @@ namespace DirigibleBattle
             _prizeManager = new PrizeManager();
             _windManager = new WindManager();
 
-            _gameManager = new GameManager(glControl, _uiManager, _playerManager, _prizeManager, _windManager);
+            _gameManager = new GameManager(glControl, this, _uiManager, _playerManager, _prizeManager, _windManager);
             _timeManager = new TimeManager(_gameManager, _prizeManager, _windManager);
 
             _networkManager = new NetworkManager(_gameManager, _uiManager, _timeManager, _playerManager);

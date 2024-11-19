@@ -34,12 +34,15 @@ namespace DirigibleBattle.Managers
         private PlayerManager _playerManager;
         private PrizeManager _prizeManager;
         private WindManager _windManager;
+        private MainWindow _mainWindow;
 
-        public GameManager(GLWpfControl glControl, UIManager uiManager, PlayerManager playerManager, PrizeManager prizeManager, WindManager windManager)
+        public GameManager(GLWpfControl glControl,MainWindow mainWindow, UIManager uiManager, PlayerManager playerManager, PrizeManager prizeManager, WindManager windManager)
         {
             _playerManager = playerManager;
             _prizeManager = prizeManager;
             _windManager = windManager;
+
+            _mainWindow = mainWindow;
 
             _uiManager = uiManager;
             _uiManager.SetGameManager(this);
@@ -58,7 +61,7 @@ namespace DirigibleBattle.Managers
         public async void GameTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
         {
             // Проверка состояния игры
-            _uiManager.GameStateCheck();
+            _uiManager.GameStateCheck(_mainWindow);
 
             // Обработка повреждений игроков
             _playerManager.CheckPlayerDamage(networkManager._firstPlayerBulletList, ref SecondPlayer);
