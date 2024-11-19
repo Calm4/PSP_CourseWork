@@ -67,7 +67,6 @@ namespace TcpConnectionLibrary
                     Console.BackgroundColor = ConsoleColor.Red;
                     Console.WriteLine("ERROR: " + requestText);
                     Console.BackgroundColor = ConsoleColor.White;
-                    throw;
                 }
                 /*}
                 catch (Exception ex)
