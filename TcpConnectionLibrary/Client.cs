@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.IO;
+
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,17 +11,17 @@ namespace TcpConnectionLibrary
     {
         public event Action<object> OnGetData;
 
-        private readonly TcpClient _client;
-        private NetworkStream _networkStream;
+        private Socket _socket;
+        private string _address;
+        private int _port;
 
-        private readonly string _address;
-        private readonly int _port;
 
-        private bool _disposed = false;
+
+
 
         public Client(string ipAddress, int port = 8000)
         {
-            _client = new TcpClient();
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _address = ipAddress;
             _port = port;
         }
@@ -30,9 +30,11 @@ namespace TcpConnectionLibrary
         {
             try
             {
-                await _client.ConnectAsync(_address, _port);
-                _networkStream = _client.GetStream();
-                Console.WriteLine("Connected to server");
+                await Task.Run(() =>
+                {
+                    _socket.Connect(_address, _port);
+                    Console.WriteLine("Connected to server");
+                });
             }
             catch (Exception ex)
             {
@@ -46,15 +48,31 @@ namespace TcpConnectionLibrary
             {
                 Console.WriteLine("Start getting data");
 
+                // Отправляем JSON-запрос, соответствующий типу T
                 var requestObj = default(T);
                 var requestJson = JsonConvert.SerializeObject(requestObj);
-                var requestData = Encoding.UTF8.GetBytes(requestJson + "\n");
+                var requestData = Encoding.UTF8.GetBytes(requestJson);
 
-                await _networkStream.WriteAsync(requestData, 0, requestData.Length);
+                await Task.Run(() =>
+                {
+                    _socket.Send(requestData);
+                    //Console.WriteLine($"Request sent to server: {requestJson}");
+                });
 
-                var responseText = await ReadDataFromServer();
-                var result = JsonConvert.DeserializeObject<T>(responseText);
+                // Получаем ответ от сервера
+                byte[] buffer = new byte[1024];
+                int bytesReceived = await Task.Run(() => _socket.Receive(buffer));
 
+                if (bytesReceived == 0)
+                {
+                    Console.WriteLine("No data received");
+                    return;
+                }
+
+                var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+                //Console.WriteLine($"Received data: {resultText}");
+
+                var result = JsonConvert.DeserializeObject<T>(resultText);
                 OnGetData?.Invoke(result);
             }
             catch (Exception ex)
@@ -63,44 +81,46 @@ namespace TcpConnectionLibrary
             }
         }
 
+
+
         public async Task UpdateData<T>(T obj)
         {
-            try
+            var json = JsonConvert.SerializeObject(obj);
+
+            //Console.WriteLine($"Sending JSON data: {json}");
+
+
+
+
+            var data = Encoding.UTF8.GetBytes(json);
+
+
+            // Отправка данных серверу
+            await Task.Run(() =>
+
             {
-                var json = JsonConvert.SerializeObject(obj);
-                var data = Encoding.UTF8.GetBytes(json + "\n");
+                _socket.Send(data);
+                //Console.WriteLine("Data sent to server");
+            });
 
-                await _networkStream.WriteAsync(data, 0, data.Length);
+            // Получение ответа от сервера
+            var buffer = new byte[1024];
+            int bytesReceived = await Task.Run(() => _socket.Receive(buffer));
+            var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
 
-                var responseText = await ReadDataFromServer();
-                var result = JsonConvert.DeserializeObject<T>(responseText);
+            var result = JsonConvert.DeserializeObject<T>(resultText);
+            OnGetData?.Invoke(result);
 
-                OnGetData?.Invoke(result);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error in UpdateData: {ex.Message}");
-            }
-        }
 
-        private async Task<string> ReadDataFromServer()
-        {
-            if (_networkStream == null || !_client.Connected)
-                throw new InvalidOperationException("NetworkStream is not available or client is not connected.");
-
-            using (var reader = new StreamReader(_networkStream, Encoding.UTF8, false, 1024, true))
-            {
-                return await reader.ReadLineAsync();
-            }
         }
 
         public void Dispose()
         {
-            if (_disposed) return;
+            _socket.Close();
+            _socket.Dispose();
 
-            _networkStream?.Dispose();
-            _client?.Close();
-            _disposed = true;
+
+
         }
 
         public void ClearAllListeners()
