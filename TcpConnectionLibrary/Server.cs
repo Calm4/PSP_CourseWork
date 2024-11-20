@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -30,53 +31,76 @@ namespace TcpConnectionLibrary
             Console.WriteLine("Client connected");
         }
 
-
-
         public async Task UpdateData<T>(T obj)
         {
             await Task.Run(() =>
             {
-                //Console.WriteLine("Start receiving data");
-
-                var buffer = new byte[1024];
-                int bytesReceived = _clientSocket.Receive(buffer);
-                var requestText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-
-                //Console.WriteLine($"Received raw data: '{requestText}'");
-
-                /* try
-                 {*/
                 try
                 {
+                    // Читаем данные в цикле
+                    var requestText = ReadDataFromClient();
                     Console.WriteLine("REQUEST TEXT:" + requestText);
+
+                    // Проверяем JSON перед десериализацией
+                    if (string.IsNullOrWhiteSpace(requestText))
+                    {
+                        Console.WriteLine("Received empty or null data");
+                        return;
+                    }
+
                     var request = JsonConvert.DeserializeObject<T>(requestText);
-                    Console.WriteLine("REQUEST" + request);
-                    //Console.WriteLine("Request received");
+                    Console.WriteLine("REQUEST: " + request);
 
                     // Отправляем ответ клиенту
                     var dataText = JsonConvert.SerializeObject(obj);
                     byte[] data = Encoding.UTF8.GetBytes(dataText);
                     _clientSocket.Send(data);
 
-                    //Console.WriteLine("Data sent to client");
                     OnGetData?.Invoke(request);
-
                 }
-                catch (Exception)
+                catch (JsonException jsonEx)
                 {
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.WriteLine("ERROR: " + requestText);
-                    Console.BackgroundColor = ConsoleColor.White;
+                    LogError($"JSON error: {jsonEx.Message}");
                 }
-                /*}
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Deserialization error: {ex.Message}");
-                }*/
+                    LogError($"General error: {ex.Message}");
+                }
             });
         }
 
+        private string ReadDataFromClient()
+        {
+            var buffer = new byte[1024];
+            var data = new List<byte>();
 
+            while (true)
+            {
+                int bytesRead = _clientSocket.Receive(buffer);
+                if (bytesRead == 0)
+                    break;
+
+                // Добавляем полученные данные в список байтов
+                for (int i = 0; i < bytesRead; i++)
+                {
+                    data.Add(buffer[i]);
+                }
+
+                // Если меньше данных, чем размер буфера, завершение чтения
+                if (bytesRead < buffer.Length)
+                    break;
+            }
+
+            return Encoding.UTF8.GetString(data.ToArray());
+        }
+
+
+        private void LogError(string message)
+        {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("ERROR: " + message);
+            Console.ResetColor();
+        }
 
         public void Dispose()
         {
