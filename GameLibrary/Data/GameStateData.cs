@@ -2,27 +2,28 @@
 {
     public class NetworkData
     {
-        public float PositionX;
-        public float PositionY;
+        public float PositionX { get; set; }
+        public float PositionY { get; set; }
 
-        public int Health;
-        public int Armor;
-        public int Fuel;
-        public int Ammo;
-        public float Speed;
-        public int NumberOfPrizesReceived;
+        public int Health { get; set; }
+        public int Armor { get; set; }
+        public int Fuel { get; set; }
+        public int Ammo { get; set; }
+        public float Speed { get; set; }
+        public int NumberOfPrizesReceived { get; set; }
 
-        public bool IsTurningLeft;
+        public bool IsTurningLeft { get; set; }
 
-        public BulletData BulletData;
+        public BulletData BulletData { get; set; }
     }
 
     public class BulletData
     {
-        public int ShooterID;
-        public float PositionX;
-        public float PositionY;
-        public bool IsLeft;
-        public int BulletType;
+        public int ShooterID { get; set; }
+        public float PositionX { get; set; }
+        public float PositionY { get; set; }
+        public bool IsLeft { get; set; }
+        public int BulletType { get; set; }
     }
+
 }
