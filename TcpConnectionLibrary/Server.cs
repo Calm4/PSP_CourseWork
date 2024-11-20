@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,88 +12,70 @@ namespace TcpConnectionLibrary
     {
         public event Action<object> OnGetData;
 
-        private Socket _listenerSocket;
-        private Socket _clientSocket;
-        private int _port;
+        private readonly TcpListener _listener;
+        private TcpClient _client;
+        private NetworkStream _networkStream;
+
+        private bool _disposed = false;
+
+        private readonly int _port;
 
         public Server(int port = 8000)
         {
             _port = port;
-            _listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _listenerSocket.Bind(new IPEndPoint(IPAddress.Any, _port));
-            _listenerSocket.Listen(10);
+            _listener = new TcpListener(IPAddress.Any, _port);
         }
 
         public async Task Start()
         {
+            _listener.Start();
             Console.WriteLine("Waiting for a connection...");
-            _clientSocket = await Task.Run(() => _listenerSocket.Accept());
+
+            _client = await _listener.AcceptTcpClientAsync();
+            _networkStream = _client.GetStream();
             Console.WriteLine("Client connected");
         }
 
         public async Task UpdateData<T>(T obj)
         {
-            await Task.Run(() =>
+            try
             {
-                try
+                var requestText = await ReadDataFromClient();
+                if (string.IsNullOrWhiteSpace(requestText))
                 {
-                    // Читаем данные в цикле
-                    var requestText = ReadDataFromClient();
-                    Console.WriteLine("REQUEST TEXT:" + requestText);
-
-                    // Проверяем JSON перед десериализацией
-                    if (string.IsNullOrWhiteSpace(requestText))
-                    {
-                        Console.WriteLine("Received empty or null data");
-                        return;
-                    }
-
-                    var request = JsonConvert.DeserializeObject<T>(requestText);
-                    Console.WriteLine("REQUEST: " + request);
-
-                    // Отправляем ответ клиенту
-                    var dataText = JsonConvert.SerializeObject(obj);
-                    byte[] data = Encoding.UTF8.GetBytes(dataText);
-                    _clientSocket.Send(data);
-
-                    OnGetData?.Invoke(request);
-                }
-                catch (JsonException jsonEx)
-                {
-                    LogError($"JSON error: {jsonEx.Message}");
-                }
-                catch (Exception ex)
-                {
-                    LogError($"General error: {ex.Message}");
-                }
-            });
-        }
-
-        private string ReadDataFromClient()
-        {
-            var buffer = new byte[1024];
-            var data = new List<byte>();
-
-            while (true)
-            {
-                int bytesRead = _clientSocket.Receive(buffer);
-                if (bytesRead == 0)
-                    break;
-
-                // Добавляем полученные данные в список байтов
-                for (int i = 0; i < bytesRead; i++)
-                {
-                    data.Add(buffer[i]);
+                    Console.WriteLine("Received empty or null data");
+                    return;
                 }
 
-                // Если меньше данных, чем размер буфера, завершение чтения
-                if (bytesRead < buffer.Length)
-                    break;
+                var request = JsonConvert.DeserializeObject<T>(requestText);
+                Console.WriteLine("REQUEST: " + request);
+
+                var dataText = JsonConvert.SerializeObject(obj);
+                var data = Encoding.UTF8.GetBytes(dataText + "\n");
+                await _networkStream.WriteAsync(data, 0, data.Length);
+
+                OnGetData?.Invoke(request);
             }
-
-            return Encoding.UTF8.GetString(data.ToArray());
+            catch (JsonException jsonEx)
+            {
+                LogError($"JSON error: {jsonEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                LogError($"General error: {ex.Message}");
+            }
         }
 
+        private async Task<string> ReadDataFromClient()
+        {
+            if (_networkStream == null || _client == null || !_client.Connected)
+                throw new InvalidOperationException("NetworkStream is not available or client is not connected.");
+
+            using (var reader = new StreamReader(_networkStream, Encoding.UTF8, false, 1024, true))
+            {
+                return await reader.ReadLineAsync();
+            }
+        }
 
         private void LogError(string message)
         {
@@ -104,9 +86,12 @@ namespace TcpConnectionLibrary
 
         public void Dispose()
         {
-            _clientSocket?.Close();
-            _listenerSocket.Close();
-            _listenerSocket.Dispose();
+            if (_disposed) return;
+
+            _networkStream?.Dispose();
+            _client?.Close();
+            _listener.Stop();
+            _disposed = true;
         }
 
         public void ClearAllListeners()
