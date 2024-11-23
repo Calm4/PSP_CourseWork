@@ -83,27 +83,15 @@ namespace TcpConnectionLibrary
             var data = new List<byte>();
 
             while (true)
-
-
-
-
-
-
             {
                 int bytesRead = _clientSocket.Receive(buffer);
                 if (bytesRead == 0)
                     break;
-
-
-
-
-
                 // Добавляем полученные данные в список байтов
                 for (int i = 0; i < bytesRead; i++)
                 {
                     data.Add(buffer[i]);
                 }
-
                 // Если меньше данных, чем размер буфера, завершение чтения
                 if (bytesRead < buffer.Length)
                     break;
