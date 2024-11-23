@@ -30,7 +30,7 @@ namespace DirigibleBattle.Managers
         private Server _server;
 
         private NetworkData _currentNetworkData = new NetworkData();
-        public BulletData BulletData { get; set; } = new BulletData();
+        public BulletData BulletData;
 
         public PrizeFactory PrizeFactory { get; set; }
 
