@@ -11,7 +11,7 @@ namespace TcpConnectionLibrary
     {
         public event Action<object> OnGetData;
 
-        private Socket _socket;
+        public Socket ClientSocket { get; private set; }
         private string _address;
         private int _port;
 
@@ -21,7 +21,7 @@ namespace TcpConnectionLibrary
 
         public Client(string ipAddress, int port = 8000)
         {
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _address = ipAddress;
             _port = port;
         }
@@ -32,7 +32,7 @@ namespace TcpConnectionLibrary
             {
                 await Task.Run(() =>
                 {
-                    _socket.Connect(_address, _port);
+                    ClientSocket.Connect(_address, _port);
                     Console.WriteLine("Connected to server");
                 });
             }
@@ -55,13 +55,13 @@ namespace TcpConnectionLibrary
 
                 await Task.Run(() =>
                 {
-                    _socket.Send(requestData);
+                    ClientSocket.Send(requestData);
                     //Console.WriteLine($"Request sent to server: {requestJson}");
                 });
 
                 // Получаем ответ от сервера
                 byte[] buffer = new byte[1024];
-                int bytesReceived = await Task.Run(() => _socket.Receive(buffer));
+                int bytesReceived = await Task.Run(() => ClientSocket.Receive(buffer));
 
                 if (bytesReceived == 0)
                 {
@@ -99,25 +99,41 @@ namespace TcpConnectionLibrary
             await Task.Run(() =>
 
             {
-                _socket.Send(data);
+                ClientSocket.Send(data);
                 //Console.WriteLine("Data sent to server");
             });
 
             // Получение ответа от сервера
-            var buffer = new byte[1024];
-            int bytesReceived = await Task.Run(() => _socket.Receive(buffer));
-            var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+            if (ClientSocket != null && ClientSocket.Connected)
+            {
+                try
+                {
+                    var buffer = new byte[1024];
+                    int bytesReceived = await Task.Run(() => ClientSocket.Receive(buffer));
+                    var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+                    var result = JsonConvert.DeserializeObject<T>(resultText);
 
-            var result = JsonConvert.DeserializeObject<T>(resultText);
-            OnGetData?.Invoke(result);
+                    OnGetData?.Invoke(result);
+                }
+                catch (SocketException ex)
+                {
+                    Console.WriteLine($"Socket error: {ex.Message}");
+                }
+            }
+            else
+            {
+                Dispose();
+                Console.WriteLine("Socket is not connected or is null.");
+            }
+
 
 
         }
 
         public void Dispose()
         {
-            _socket.Close();
-            _socket.Dispose();
+            ClientSocket.Close();
+            ClientSocket.Dispose();
 
 
 

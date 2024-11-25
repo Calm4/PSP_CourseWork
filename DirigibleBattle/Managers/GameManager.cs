@@ -1,18 +1,12 @@
 ﻿using AmmunitionLibrary;
 using GameLibrary;
 using GameLibrary.Dirigible;
-using GameLibrary.DirigibleDecorators;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
 using OpenTK.Wpf;
-using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 
 
 namespace DirigibleBattle.Managers
@@ -23,12 +17,6 @@ namespace DirigibleBattle.Managers
         public AbstractDirigible SecondPlayer;
 
         public List<Prize> PrizeList;
-
-        private readonly Random random;
-
-        private bool wasFirstPlayerFirePressed = false;
-        private bool wasSecondPlayerFirePressed = false;
-
 
         private UIManager _uiManager;
         private PlayerManager _playerManager;
@@ -45,9 +33,8 @@ namespace DirigibleBattle.Managers
             _mainWindow = mainWindow;
 
             _uiManager = uiManager;
-            _uiManager.SetGameManager(this);
+           
 
-            random = new Random();
             GameSettings(glControl);
 
             TextureManager.SetupTexture();
@@ -88,10 +75,7 @@ namespace DirigibleBattle.Managers
                 _playerManager.UpdatePlayerTexture();
             }
 
-            // Обновление данных сетевого игрока
             _ = networkManager.UpdateNetworkData();
-
-            // Обновление интерфейса
 
         }
 

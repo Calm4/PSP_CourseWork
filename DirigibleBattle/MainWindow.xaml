@@ -66,11 +66,11 @@
        Content="IP Address: ..."
        HorizontalAlignment="Center"
        VerticalAlignment="Top"
-       Margin="0, 50, 0, 0"
+       Margin="0,3,0,0"
        FontSize="14"
        FontStyle="Italic"
        FontWeight="Bold"
-       Foreground="Blue"/>
+       Foreground="Black"/>
         <Label x:Name="GameOverLabel"
        Content=""
        HorizontalAlignment="Center"

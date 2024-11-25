@@ -6,6 +6,7 @@ using PrizesLibrary.Factories;
 using PrizesLibrary.Prizes;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,8 +27,8 @@ namespace DirigibleBattle.Managers
 
         private ITcpConnectionHandler _handler;
 
-        private Client _client;
-        private Server _server;
+        public Client Client { get; private set; }
+        public Server Server { get; private set; }
 
         private NetworkData _currentNetworkData = new NetworkData();
         public BulletData BulletData;
@@ -47,6 +48,7 @@ namespace DirigibleBattle.Managers
             _uiManager = uiManager;
             _timeManager = timeManager;
             _playerManager = playerManager;
+            _uiManager.SetGameMaangers(_gameManager);
         }
 
         public void SetNetworkStartData(ITcpConnectionHandler networkHandler, bool isLeftPlayer, int seed)
@@ -158,30 +160,30 @@ namespace DirigibleBattle.Managers
 
         public async void StartServer()
         {
-            _server = new Server();
+            Server = new Server();
             int seed = new Random().Next();
 
-            _server.OnGetData += (_) => StartGame(seed, _server, true);
+            Server.OnGetData += (_) => StartGame(seed, Server, true);
 
-            await _server.Start();
+            await Server.Start();
             Console.WriteLine("Server started. Client connected.");
 
-            await _server.UpdateData<int>(seed);
+            await Server.UpdateData<int>(seed);
         }
         public async void StartClient(TextBox ipAddressInput)
         {
-            _client = new Client(ipAddressInput.Text);
+            Client = new Client(ipAddressInput.Text);
 
-            _client.OnGetData += (obj) =>
+            Client.OnGetData += (obj) =>
             {
                 Console.WriteLine("Event OnGetData triggered");
-                StartGame((int)obj, _client, false);
+                StartGame((int)obj, Client, false);
             };
 
-            await _client.Connect();
+            await Client.Connect();
             Console.WriteLine("Client connected successfully.");
 
-            await _client.GetData<int>();
+            await Client.GetData<int>();
         }
 
         private void StartGame(int seed, ITcpConnectionHandler handler, bool isServer)
@@ -189,7 +191,7 @@ namespace DirigibleBattle.Managers
             try
             {
                 Console.WriteLine("StartGame is called");
-                handler.ClearAllListeners(); // Очищаем подписки на события
+                handler.ClearAllListeners();
 
                 Console.WriteLine("Calling SetNetworkStartData");
                 SetNetworkStartData(handler, isServer, seed);

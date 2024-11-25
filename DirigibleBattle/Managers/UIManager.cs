@@ -25,10 +25,11 @@ namespace DirigibleBattle.Managers
 
         private GameManager _gameManager;
 
-        public void SetGameManager(GameManager gameManager)
+        public void SetGameMaangers(GameManager gameManager)
         {
             _gameManager = gameManager;
         }
+
 
         public UIManager(Button serverButton, Button clientButton, TextBox ipAddressInput, Label gameOverLabel, Label firstPlayerInfo, Label secondPlayerInfo)
         {
@@ -38,6 +39,8 @@ namespace DirigibleBattle.Managers
             _gameOverLabel = gameOverLabel;
             _firstPlayerInfo = firstPlayerInfo;
             _secondPlayerInfo = secondPlayerInfo;
+            _gameOverLabel.Visibility = Visibility.Hidden;
+
         }
         public void DisplayLocalIPAddress(Label labelIp, TextBox textBoxIp)
         {
@@ -119,6 +122,7 @@ namespace DirigibleBattle.Managers
                 _ipAddressInput.Visibility = Visibility.Collapsed;
                 _serverButton.Visibility = Visibility.Collapsed;
                 _clientButton.Visibility = Visibility.Collapsed;
+                _gameOverLabel.Visibility = Visibility.Collapsed;
                 Console.WriteLine("Role Selection UI elements are hidden");
             }
             catch (Exception ex)

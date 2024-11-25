@@ -12,27 +12,23 @@ namespace TcpConnectionLibrary
     {
         public event Action<object> OnGetData;
 
-        private Socket _listenerSocket;
+        public Socket ServerSocket { get; private set; }
         private Socket _clientSocket;
         private int _port;
-
-
-
-
 
         public Server(int port = 8000)
         {
             _port = port;
-            _listenerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _listenerSocket.Bind(new IPEndPoint(IPAddress.Any, _port));
-            _listenerSocket.Listen(10);
+            ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ServerSocket.Bind(new IPEndPoint(IPAddress.Any, _port));
+            ServerSocket.Listen(10);
         }
 
         public async Task Start()
         {
 
             Console.WriteLine("Waiting for a connection...");
-            _clientSocket = await Task.Run(() => _listenerSocket.Accept());
+            _clientSocket = await Task.Run(() => ServerSocket.Accept());
 
 
             Console.WriteLine("Client connected");
@@ -43,8 +39,8 @@ namespace TcpConnectionLibrary
             await Task.Run(() =>
             {
                 try
-
                 {
+
                     // Читаем данные в цикле
                     var requestText = ReadDataFromClient();
                     Console.WriteLine("REQUEST TEXT:" + requestText);
@@ -65,14 +61,15 @@ namespace TcpConnectionLibrary
                     _clientSocket.Send(data);
 
                     OnGetData?.Invoke(request);
+
                 }
                 catch (JsonException jsonEx)
                 {
-                    LogError($"JSON error: {jsonEx.Message}");
+                    LogError($"1111JSON error: {jsonEx.Message}");
                 }
                 catch (Exception ex)
                 {
-                    LogError($"General error: {ex.Message}");
+                    LogError($"222General error: {ex.Message}");
                 }
             });
         }
@@ -84,17 +81,24 @@ namespace TcpConnectionLibrary
 
             while (true)
             {
-                int bytesRead = _clientSocket.Receive(buffer);
-                if (bytesRead == 0)
-                    break;
-                // Добавляем полученные данные в список байтов
-                for (int i = 0; i < bytesRead; i++)
+                try
                 {
-                    data.Add(buffer[i]);
+                    int bytesRead = _clientSocket.Receive(buffer);
+                    if (bytesRead == 0)
+                        break;
+                    // Добавляем полученные данные в список байтов
+                    for (int i = 0; i < bytesRead; i++)
+                    {
+                        data.Add(buffer[i]);
+                    }
+                    // Если меньше данных, чем размер буфера, завершение чтения
+                    if (bytesRead < buffer.Length)
+                        break;
                 }
-                // Если меньше данных, чем размер буфера, завершение чтения
-                if (bytesRead < buffer.Length)
-                    break;
+                catch
+                {
+                    Dispose();
+                }
             }
 
             return Encoding.UTF8.GetString(data.ToArray());
@@ -111,8 +115,8 @@ namespace TcpConnectionLibrary
         public void Dispose()
         {
             _clientSocket?.Close();
-            _listenerSocket.Close();
-            _listenerSocket.Dispose();
+            ServerSocket.Close();
+            ServerSocket.Dispose();
 
 
 
