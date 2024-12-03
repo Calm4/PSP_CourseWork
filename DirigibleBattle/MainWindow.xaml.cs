@@ -22,7 +22,7 @@ namespace DirigibleBattle
         {
             InitializeComponent();
 
-            _uiManager = new UIManager(ServerButton, ClientButton, IpAddressInput, GameOverLabel, firstPlayerInfo, secondPlayerInfo);
+            _uiManager = new UIManager(ServerButton, ClientButton, IpAddressInput, GameOverLabel, firstPlayerInfo, secondPlayerInfo, ControlSchemeComboBox);
 
             _playerManager = new PlayerManager();
             _prizeManager = new PrizeManager();
@@ -64,6 +64,23 @@ namespace DirigibleBattle
                 Console.WriteLine($"Error connecting as client: {ex.Message}");
             }
         }
+
+        private void ControlSchemeComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (_playerManager == null)
+                return;
+
+            string selectedScheme = (ControlSchemeComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content.ToString();
+            if (selectedScheme == "WASD")
+            {
+                _playerManager.SetControlSchemeToWASD();
+            }
+            else
+            {
+                _playerManager.SetControlSchemeToArrowKeys();
+            }
+        }
+
 
         private void GlControl_Render(TimeSpan obj)
         {

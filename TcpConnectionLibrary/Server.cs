@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace TcpConnectionLibrary
 {
-    public class Server : ITcpConnectionHandler, IDisposable
+    public class Server : ITcpNetworkConnection, IDisposable
     {
-        public event Action<object> OnGetData;
+        public event Action<object> OnGetNetworkData;
 
         public Socket ServerSocket { get; private set; }
         private Socket _clientSocket;
@@ -20,27 +21,46 @@ namespace TcpConnectionLibrary
         {
             _port = port;
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            ServerSocket.Bind(new IPEndPoint(IPAddress.Any, _port));
+            var ipAddress = new IPEndPoint(IPAddress.Any, _port);
+            ServerSocket.Bind(ipAddress);
+
+            // Получение локального адреса, к которому привязан сервер
+            var localEndPoint = ServerSocket.LocalEndPoint as IPEndPoint;
+            if (localEndPoint != null)
+            {
+                Console.WriteLine($"Server started on IP: {localEndPoint.Address}, Port: {localEndPoint.Port}");
+            }
+
             ServerSocket.Listen(10);
         }
 
+
         public async Task Start()
         {
-
             Console.WriteLine("Waiting for a connection...");
             _clientSocket = await Task.Run(() => ServerSocket.Accept());
 
+            // Получение локального IP-адреса и порта
+            var localEndPoint = _clientSocket.LocalEndPoint as IPEndPoint;
+            var remoteEndPoint = _clientSocket.RemoteEndPoint as IPEndPoint;
 
-            Console.WriteLine("Client connected");
+            if (localEndPoint != null)
+            {
+                Console.WriteLine($"Server is bound to IP: {localEndPoint.Address}, Port: {localEndPoint.Port}");
+            }
+            if (remoteEndPoint != null)
+            {
+                Console.WriteLine($"Client connected from IP: {remoteEndPoint.Address}, Port: {remoteEndPoint.Port}");
+            }
         }
 
-        public async Task UpdateData<T>(T obj)
+
+        public async Task UpdateNetworkData<T>(T obj)
         {
             await Task.Run(() =>
             {
                 try
                 {
-
                     // Читаем данные в цикле
                     var requestText = ReadDataFromClient();
                     Console.WriteLine("REQUEST TEXT:" + requestText);
@@ -60,16 +80,16 @@ namespace TcpConnectionLibrary
                     byte[] data = Encoding.UTF8.GetBytes(dataText);
                     _clientSocket.Send(data);
 
-                    OnGetData?.Invoke(request);
+                    OnGetNetworkData?.Invoke(request);
 
                 }
                 catch (JsonException jsonEx)
                 {
-                    LogError($"1111JSON error: {jsonEx.Message}");
+                    LogError($"1 JSON error: {jsonEx.Message}");
                 }
                 catch (Exception ex)
                 {
-                    LogError($"222General error: {ex.Message}");
+                    LogError($"2 General error: {ex.Message}");
                 }
             });
         }
@@ -117,14 +137,11 @@ namespace TcpConnectionLibrary
             _clientSocket?.Close();
             ServerSocket.Close();
             ServerSocket.Dispose();
-
-
-
         }
 
-        public void ClearAllListeners()
+        public void UnsubscribeActions()
         {
-            OnGetData = null;
+            OnGetNetworkData = null;
         }
     }
 }

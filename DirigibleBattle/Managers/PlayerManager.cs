@@ -19,10 +19,10 @@ namespace DirigibleBattle.Managers
 
         public readonly List<Key> CurrentPlayerInput = new List<Key>()
             {
-                Key.W,
-                Key.S,
-                Key.A,
-                Key.D,
+                Key.Up,
+                Key.Down,
+                Key.Left,
+                Key.Right,
             };
 
 
@@ -195,6 +195,22 @@ namespace DirigibleBattle.Managers
                     ? TextureManager.secondDirigibleTextureLeft
                     : TextureManager.secondDirigibleTextureRight;
             }
+        }
+
+
+        public void SetControlSchemeToWASD()
+        {
+            CurrentPlayerInput.Clear();
+            CurrentPlayerInput.AddRange(new[] { Key.W, Key.S, Key.A, Key.D });
+            CurrentPlayerFire.AddRange(new[] { Key.Z, Key.X, Key.C });
+        }
+
+        public void SetControlSchemeToArrowKeys()
+        {
+            CurrentPlayerInput.Clear();
+            CurrentPlayerInput.AddRange(new[] { Key.Up, Key.Down, Key.Left, Key.Right });
+            CurrentPlayerFire.AddRange(new[] { Key.I, Key.O, Key.P });
+
         }
 
     }

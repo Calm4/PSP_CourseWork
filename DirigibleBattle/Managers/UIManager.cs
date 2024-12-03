@@ -20,10 +20,12 @@ namespace DirigibleBattle.Managers
         private Button _serverButton;
         private Button _clientButton;
         private TextBox _ipAddressInput;
+        private ComboBox _comboBox;
 
         private Label _gameOverLabel;
 
         private GameManager _gameManager;
+
 
         public void SetGameMaangers(GameManager gameManager)
         {
@@ -31,7 +33,7 @@ namespace DirigibleBattle.Managers
         }
 
 
-        public UIManager(Button serverButton, Button clientButton, TextBox ipAddressInput, Label gameOverLabel, Label firstPlayerInfo, Label secondPlayerInfo)
+        public UIManager(Button serverButton, Button clientButton, TextBox ipAddressInput, Label gameOverLabel, Label firstPlayerInfo, Label secondPlayerInfo, ComboBox comboBox)
         {
             _serverButton = serverButton;
             _clientButton = clientButton;
@@ -39,6 +41,7 @@ namespace DirigibleBattle.Managers
             _gameOverLabel = gameOverLabel;
             _firstPlayerInfo = firstPlayerInfo;
             _secondPlayerInfo = secondPlayerInfo;
+            _comboBox = comboBox;
             _gameOverLabel.Visibility = Visibility.Hidden;
 
         }
@@ -123,6 +126,8 @@ namespace DirigibleBattle.Managers
                 _serverButton.Visibility = Visibility.Collapsed;
                 _clientButton.Visibility = Visibility.Collapsed;
                 _gameOverLabel.Visibility = Visibility.Collapsed;
+                _comboBox.Visibility = Visibility.Collapsed;
+
                 Console.WriteLine("Role Selection UI elements are hidden");
             }
             catch (Exception ex)

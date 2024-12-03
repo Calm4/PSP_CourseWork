@@ -25,7 +25,7 @@ namespace DirigibleBattle.Managers
 
         public List<Prize> CurrentPrizeList;
 
-        private ITcpConnectionHandler _handler;
+        private ITcpNetworkConnection _networkConnection;
 
         public Client Client { get; private set; }
         public Server Server { get; private set; }
@@ -51,9 +51,9 @@ namespace DirigibleBattle.Managers
             _uiManager.SetGameMaangers(_gameManager);
         }
 
-        public void SetNetworkStartData(ITcpConnectionHandler networkHandler, bool isLeftPlayer, int seed)
+        public void SetNetworkStartData(ITcpNetworkConnection networkConnection, bool isLeftPlayer, int seed)
         {
-            _handler = networkHandler;
+            _networkConnection = networkConnection;
 
             if (isLeftPlayer)
             {
@@ -70,7 +70,7 @@ namespace DirigibleBattle.Managers
             random = new Random(seed);
             PrizeFactory = new PrizeFactory(random);
 
-            _handler.OnGetData += OnGetNetworkData;
+            _networkConnection.OnGetNetworkData += OnGetNetworkData;
         }
 
         private void OnGetNetworkData(object obj)
@@ -152,7 +152,7 @@ namespace DirigibleBattle.Managers
             _currentNetworkData.NumberOfPrizesReceived = CurrentPlayer.NumberOfPrizesReceived;
             _currentNetworkData.IsTurningLeft = CurrentPlayer.IsTurnedLeft;
 
-            await _handler.UpdateData(_currentNetworkData);
+            await _networkConnection.UpdateNetworkData(_currentNetworkData);
 
             BulletData = null;
         }
@@ -163,18 +163,18 @@ namespace DirigibleBattle.Managers
             Server = new Server();
             int seed = new Random().Next();
 
-            Server.OnGetData += (_) => StartGame(seed, Server, true);
+            Server.OnGetNetworkData += (_) => StartGame(seed, Server, true);
 
             await Server.Start();
             Console.WriteLine("Server started. Client connected.");
 
-            await Server.UpdateData<int>(seed);
+            await Server.UpdateNetworkData<int>(seed);
         }
         public async void StartClient(TextBox ipAddressInput)
         {
             Client = new Client(ipAddressInput.Text);
 
-            Client.OnGetData += (obj) =>
+            Client.OnGetNetworkData += (obj) =>
             {
                 Console.WriteLine("Event OnGetData triggered");
                 StartGame((int)obj, Client, false);
@@ -183,18 +183,18 @@ namespace DirigibleBattle.Managers
             await Client.Connect();
             Console.WriteLine("Client connected successfully.");
 
-            await Client.GetData<int>();
+            await Client.GetNetworkData<int>();
         }
 
-        private void StartGame(int seed, ITcpConnectionHandler handler, bool isServer)
+        private void StartGame(int seed, ITcpNetworkConnection networkConnection, bool isServer)
         {
             try
             {
                 Console.WriteLine("StartGame is called");
-                handler.ClearAllListeners();
+                networkConnection.UnsubscribeActions();
 
                 Console.WriteLine("Calling SetNetworkStartData");
-                SetNetworkStartData(handler, isServer, seed);
+                SetNetworkStartData(networkConnection, isServer, seed);
                 Console.WriteLine("SetNetworkStartData completed");
 
                 // Проверяем, вызывается ли метод HideRoleSelection

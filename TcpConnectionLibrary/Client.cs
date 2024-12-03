@@ -1,28 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
-
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TcpConnectionLibrary
 {
-    public class Client : ITcpConnectionHandler, IDisposable
+    public class Client : ITcpNetworkConnection, IDisposable
     {
-        public event Action<object> OnGetData;
+        public event Action<object> OnGetNetworkData;
 
         public Socket ClientSocket { get; private set; }
         private string _address;
         private int _port;
 
-
-
-
-
         public Client(string ipAddress, int port = 8000)
         {
             ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _address = ipAddress;
+            Console.WriteLine("ipAddres: " + _address);
             _port = port;
         }
 
@@ -42,13 +38,12 @@ namespace TcpConnectionLibrary
             }
         }
 
-        public async Task GetData<T>()
+        public async Task GetNetworkData<T>()
         {
             try
             {
                 Console.WriteLine("Start getting data");
 
-                // Отправляем JSON-запрос, соответствующий типу T
                 var requestObj = default(T);
                 var requestJson = JsonConvert.SerializeObject(requestObj);
                 var requestData = Encoding.UTF8.GetBytes(requestJson);
@@ -59,7 +54,6 @@ namespace TcpConnectionLibrary
                     //Console.WriteLine($"Request sent to server: {requestJson}");
                 });
 
-                // Получаем ответ от сервера
                 byte[] buffer = new byte[1024];
                 int bytesReceived = await Task.Run(() => ClientSocket.Receive(buffer));
 
@@ -73,7 +67,7 @@ namespace TcpConnectionLibrary
                 //Console.WriteLine($"Received data: {resultText}");
 
                 var result = JsonConvert.DeserializeObject<T>(resultText);
-                OnGetData?.Invoke(result);
+                OnGetNetworkData?.Invoke(result);
             }
             catch (Exception ex)
             {
@@ -83,17 +77,13 @@ namespace TcpConnectionLibrary
 
 
 
-        public async Task UpdateData<T>(T obj)
+        public async Task UpdateNetworkData<T>(T obj)
         {
             var json = JsonConvert.SerializeObject(obj);
 
             //Console.WriteLine($"Sending JSON data: {json}");
 
-
-
-
             var data = Encoding.UTF8.GetBytes(json);
-
 
             // Отправка данных серверу
             await Task.Run(() =>
@@ -113,7 +103,7 @@ namespace TcpConnectionLibrary
                     var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
                     var result = JsonConvert.DeserializeObject<T>(resultText);
 
-                    OnGetData?.Invoke(result);
+                    OnGetNetworkData?.Invoke(result);
                 }
                 catch (SocketException ex)
                 {
@@ -125,23 +115,17 @@ namespace TcpConnectionLibrary
                 Dispose();
                 Console.WriteLine("Socket is not connected or is null.");
             }
-
-
-
         }
 
         public void Dispose()
         {
             ClientSocket.Close();
             ClientSocket.Dispose();
-
-
-
         }
 
-        public void ClearAllListeners()
+        public void UnsubscribeActions()
         {
-            OnGetData = null;
+            OnGetNetworkData = null;
         }
     }
 }

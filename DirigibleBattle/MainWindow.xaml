@@ -80,5 +80,18 @@
        Foreground="Red"
        Visibility="Hidden"/>
 
+        <ComboBox x:Name="ControlSchemeComboBox"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Top"
+          Margin="0, 250, 0, 0"
+          Width="200"
+          Height="30"
+          FontSize="14"
+          SelectionChanged="ControlSchemeComboBox_SelectionChanged">
+            <ComboBoxItem Content="Arrow Keys" IsSelected="True"/>
+            <ComboBoxItem Content="WASD"/>
+        </ComboBox>
+
+
     </Grid>
 </Window>
