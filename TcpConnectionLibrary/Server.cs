@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -34,7 +33,6 @@ namespace TcpConnectionLibrary
             ServerSocket.Listen(10);
         }
 
-
         public async Task Start()
         {
             Console.WriteLine("Waiting for a connection...");
@@ -54,7 +52,6 @@ namespace TcpConnectionLibrary
             }
         }
 
-
         public async Task UpdateNetworkData<T>(T obj)
         {
             await Task.Run(() =>
@@ -72,7 +69,8 @@ namespace TcpConnectionLibrary
                         return;
                     }
 
-                    var request = JsonConvert.DeserializeObject<T>(requestText);
+                    // Десериализация запроса
+                    T request = JsonConvert.DeserializeObject<T>(requestText);
                     Console.WriteLine("REQUEST: " + request);
 
                     // Отправляем ответ клиенту
@@ -81,15 +79,14 @@ namespace TcpConnectionLibrary
                     _clientSocket.Send(data);
 
                     OnGetNetworkData?.Invoke(request);
-
                 }
                 catch (JsonException jsonEx)
                 {
-                    LogError($"1 JSON error: {jsonEx.Message}");
+                    LogError($"JSON error: {jsonEx.Message}");
                 }
                 catch (Exception ex)
                 {
-                    LogError($"2 General error: {ex.Message}");
+                    LogError($"General error: {ex.Message}");
                 }
             });
         }
@@ -107,23 +104,21 @@ namespace TcpConnectionLibrary
                     if (bytesRead == 0)
                         break;
                     // Добавляем полученные данные в список байтов
-                    for (int i = 0; i < bytesRead; i++)
-                    {
-                        data.Add(buffer[i]);
-                    }
+                    data.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
+
                     // Если меньше данных, чем размер буфера, завершение чтения
                     if (bytesRead < buffer.Length)
                         break;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Dispose();
+                    LogError($"Receive error: {ex.Message}");
+                    break;
                 }
             }
 
             return Encoding.UTF8.GetString(data.ToArray());
         }
-
 
         private void LogError(string message)
         {
