@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AmmunitionLibrary.Bullet" Collapsed="true">
+    <Position X="25.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AmmunitionLibrary.CommonBullet" Collapsed="true">
+    <Position X="23" Y="2.25" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AmmunitionLibrary.FastBullet" Collapsed="true">
+    <Position X="21" Y="2.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="AmmunitionLibrary.HeavyBullet" Collapsed="true">
+    <Position X="25.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.CreateTexture" Collapsed="true">
+    <Position X="17.5" Y="7" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.NetworkData" Collapsed="true">
+    <Position X="25.25" Y="7" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.BulletData" Collapsed="true">
+    <Position X="27.5" Y="7" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.ObjectRenderer" Collapsed="true">
+    <Position X="17.5" Y="6.25" Width="2.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.Dirigible.AbstractDirigible" Collapsed="true">
+    <Position X="18" Y="1.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.Dirigible.BasicDirigible" Collapsed="true">
+    <Position X="18.75" Y="2.25" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.AmmoBoostDecorator" Collapsed="true">
+    <Position X="18.75" Y="3.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.ArmorBoostDecorator" Collapsed="true">
+    <Position X="24.25" Y="3.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.DirigibleDecorator" Collapsed="true">
+    <Position X="16.5" Y="2.25" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.FuelBoostDecorator" Collapsed="true">
+    <Position X="16.25" Y="3.75" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.HealthBoostDecorator" Collapsed="true">
+    <Position X="21.5" Y="3.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="GameLibrary.DirigibleDecorators.SpeedBoostDecorator" Collapsed="true">
+    <Position X="27" Y="3.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="TcpConnectionLibrary.Client" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="TcpConnectionLibrary.Server" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DirigibleBattle.App" Collapsed="true">
+    <Position X="15.5" Y="6.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAADABIAACAAAAQABAAEAAAQAQAAAAACAAAAAQ=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DirigibleBattle.Managers.ColliderManager" Collapsed="true">
+    <Position X="23" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAABAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Managers\ColliderManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.GameManager" Collapsed="true">
+    <Position X="25.25" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAIAAAAAAABABAAAAAEQAAAAAAAAAAIAwc=</HashCode>
+      <FileName>Managers\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.NetworkManager" Collapsed="true">
+    <Position X="23" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAAIABACAAQAQAgAAARARAgEAAAQAAAAAQAwgICAAQ=</HashCode>
+      <FileName>Managers\NetworkManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.PlayerManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AEAABBIAAKAAAgIAQAgAAAAQAAAAAIAAAQAAACAAAAA=</HashCode>
+      <FileName>Managers\PlayerManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DirigibleBattle.Managers.PrizeManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="23" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AGAAAAAIAAAAAAYAAACAAAAAAAAAAAAAAAEABAAAEAE=</HashCode>
+      <FileName>Managers\PrizeManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DirigibleBattle.Managers.RenderManager" Collapsed="true">
+    <Position X="23" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACABAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Managers\RenderManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.TextureManager" Collapsed="true">
+    <Position X="25.25" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAAAAQCABAAAAAAAAACAAEAgGAgAAAAAAA=</HashCode>
+      <FileName>Managers\TextureManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.TimeManager" Collapsed="true">
+    <Position X="27.5" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAACAAIABkAAAAAAAAAAEAAAAICAIQAAIAAAAQ=</HashCode>
+      <FileName>Managers\TimeManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.UIManager" Collapsed="true">
+    <Position X="25.25" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QABAAAAAHAQAAAAAAQAggAAACAAAAgAAAAQAAEAQAAA=</HashCode>
+      <FileName>Managers\UIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Managers.WindManager" Collapsed="true">
+    <Position X="27.5" Y="6.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAIAEAAAAAIAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Managers\WindManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Properties.Resources" Collapsed="true">
+    <Position X="20.5" Y="7" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirigibleBattle.Properties.Settings" Collapsed="true">
+    <Position X="15.5" Y="5.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="TcpConnectionLibrary.ITcpNetworkConnection" Collapsed="true">
+    <Position X="17.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="DirigibleBattle.Managers.IGameObjectManager" Collapsed="true">
+    <Position X="17.5" Y="5.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Managers\IGameObjectManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Times New Roman" Size="14" />
+</ClassDiagram>
