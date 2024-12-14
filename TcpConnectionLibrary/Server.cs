@@ -92,12 +92,10 @@ namespace TcpConnectionLibrary
                 }
             }
 
-            // Конвертируем в строку и обрезаем лишние символы
             string receivedString = Encoding.UTF8.GetString(data.ToArray());
             string finalString = string.Empty;
             bool processing = true;
 
-            // Ищем завершение JSON объекта (закрывающая фигурная скобка)
             foreach (char item in receivedString)
             {
                 if (processing)
@@ -113,8 +111,6 @@ namespace TcpConnectionLibrary
                     }
                 }
             }
-
-            Console.WriteLine($"Received JSON: {finalString}");
             return finalString;
         }
 
