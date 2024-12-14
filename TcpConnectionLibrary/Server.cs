@@ -56,38 +56,27 @@ namespace TcpConnectionLibrary
         {
             await Task.Run(() =>
             {
-                try
+                // Читаем данные в цикле
+                var requestText = ReadDataFromClient();
+                Console.WriteLine("REQUEST TEXT:" + requestText);
+
+                // Проверяем JSON перед десериализацией
+                if (string.IsNullOrWhiteSpace(requestText))
                 {
-                    // Читаем данные в цикле
-                    var requestText = ReadDataFromClient();
-                    Console.WriteLine("REQUEST TEXT:" + requestText);
-
-                    // Проверяем JSON перед десериализацией
-                    if (string.IsNullOrWhiteSpace(requestText))
-                    {
-                        Console.WriteLine("Received empty or null data");
-                        return;
-                    }
-
-                    // Десериализация запроса
-                    T request = JsonConvert.DeserializeObject<T>(requestText);
-                    Console.WriteLine("REQUEST: " + request);
-
-                    // Отправляем ответ клиенту
-                    var dataText = JsonConvert.SerializeObject(obj);
-                    byte[] data = Encoding.UTF8.GetBytes(dataText);
-                    _clientSocket.Send(data);
-
-                    OnGetNetworkData?.Invoke(request);
+                    Console.WriteLine("Received empty or null data");
+                    return;
                 }
-                catch (JsonException jsonEx)
-                {
-                    LogError($"JSON error: {jsonEx.Message}");
-                }
-                catch (Exception ex)
-                {
-                    LogError($"General error: {ex.Message}");
-                }
+
+                // Десериализация запроса
+                T request = JsonConvert.DeserializeObject<T>(requestText);
+                Console.WriteLine("REQUEST: " + request);
+
+                // Отправляем ответ клиенту
+                var dataText = JsonConvert.SerializeObject(obj);
+                byte[] data = Encoding.UTF8.GetBytes(dataText);
+                _clientSocket.Send(data);
+
+                OnGetNetworkData?.Invoke(request);
             });
         }
 
