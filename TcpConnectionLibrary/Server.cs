@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -62,31 +63,32 @@ namespace TcpConnectionLibrary
                 try
                 {
                     // Читаем данные в цикле
-                    var requestText = ReadDataFromClient();
-                    Console.WriteLine("REQUEST TEXT:" + requestText);
+                    var requestTexts = ReadDataFromClient();
 
-                    // Проверяем JSON перед десериализацией
-                    if (string.IsNullOrWhiteSpace(requestText))
-                    {
-                        Console.WriteLine("Received empty or null data");
-                        return;
-                    }
+                   
+                        if (string.IsNullOrWhiteSpace(requestTexts))
+                        {
+                            Console.WriteLine("Received empty or null data");
+                            return;
+                        }
 
-                    var request = JsonConvert.DeserializeObject<T>(requestText);
+                        try
+                        {
+                            var request = JsonConvert.DeserializeObject<T>(requestTexts);
+                            Console.WriteLine("REQUEST: " + request);
 
-                    Console.WriteLine("REQUEST: " + request);
+                            // Отправляем ответ клиенту
+                            var dataText = JsonConvert.SerializeObject(obj);
+                            byte[] data = Encoding.UTF8.GetBytes(dataText);
+                            _clientSocket.Send(data);
 
-                    // Отправляем ответ клиенту
-                    var dataText = JsonConvert.SerializeObject(obj);
-                    byte[] data = Encoding.UTF8.GetBytes(dataText);
-                    _clientSocket.Send(data);
-
-                    OnGetNetworkData?.Invoke(request);
-
-                }
-                catch (JsonException jsonEx)
-                {
-                    LogError($"1 JSON error: {jsonEx.Message}");
+                            OnGetNetworkData?.Invoke(request);
+                        }
+                        catch (JsonException jsonEx)
+                        {
+                            LogError($"1 JSON error: {jsonEx.Message}");
+                        }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -94,6 +96,7 @@ namespace TcpConnectionLibrary
                 }
             });
         }
+
 
         private string ReadDataFromClient()
         {
@@ -107,25 +110,46 @@ namespace TcpConnectionLibrary
                     int bytesRead = _clientSocket.Receive(buffer);
                     if (bytesRead == 0)
                         break;
-                    // Добавляем полученные данные в список байтов
+
                     for (int i = 0; i < bytesRead; i++)
                     {
                         data.Add(buffer[i]);
                     }
-                    // Если меньше данных, чем размер буфера, завершение чтения
+
                     if (bytesRead < buffer.Length)
                         break;
                 }
                 catch
                 {
                     Dispose();
-
                 }
             }
 
-            return Encoding.UTF8.GetString(data.ToArray());
+            string rawData = Encoding.UTF8.GetString(data.ToArray());
+
+            // Теперь используется строка в методе Split
+            // Проверка на валидный JSON и обработка строки
+            if (string.IsNullOrWhiteSpace(rawData) || !IsValidJson(rawData))
+            {
+                LogError("Invalid or empty JSON received.");
+                return string.Empty;
+            }
+
+            return rawData;
         }
 
+        private bool IsValidJson(string str)
+        {
+            try
+            {
+                JsonConvert.DeserializeObject(str);
+                return true;
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
+        }
 
         private void LogError(string message)
         {
