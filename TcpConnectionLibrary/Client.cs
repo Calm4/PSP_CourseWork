@@ -18,7 +18,7 @@ namespace TcpConnectionLibrary
         {
             ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _address = ipAddress;
-            Console.WriteLine("ipAddress: " + _address);
+            Console.WriteLine("ipAddres: " + _address);
             _port = port;
         }
 
@@ -51,7 +51,7 @@ namespace TcpConnectionLibrary
                 await Task.Run(() =>
                 {
                     ClientSocket.Send(requestData);
-
+                    //Console.WriteLine($"Request sent to server: {requestJson}");
                 });
 
                 byte[] buffer = new byte[1024];
@@ -64,9 +64,9 @@ namespace TcpConnectionLibrary
                 }
 
                 var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-                Console.WriteLine($"Received data: {resultText}");
+                //Console.WriteLine($"Received data: {resultText}");
 
-                // Обработка результата
+
                 var result = JsonConvert.DeserializeObject<T>(resultText);
                 OnGetNetworkData?.Invoke(result);
             }
@@ -82,7 +82,7 @@ namespace TcpConnectionLibrary
         {
             var json = JsonConvert.SerializeObject(obj);
 
-
+            //Console.WriteLine($"Sending JSON data: {json}");
 
             var data = Encoding.UTF8.GetBytes(json);
 
@@ -91,7 +91,7 @@ namespace TcpConnectionLibrary
 
             {
                 ClientSocket.Send(data);
-
+                //Console.WriteLine("Data sent to server");
             });
 
             // Получение ответа от сервера

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -72,8 +72,8 @@ namespace TcpConnectionLibrary
                         return;
                     }
 
-                    // Десериализация запроса
-                    T request = JsonConvert.DeserializeObject<T>(requestText);
+                    var request = JsonConvert.DeserializeObject<T>(requestText);
+
                     Console.WriteLine("REQUEST: " + request);
 
                     // Отправляем ответ клиенту
@@ -86,11 +86,11 @@ namespace TcpConnectionLibrary
                 }
                 catch (JsonException jsonEx)
                 {
-                    LogError($"JSON error: {jsonEx.Message}");
+                    LogError($"1 JSON error: {jsonEx.Message}");
                 }
                 catch (Exception ex)
                 {
-                    LogError($"General error: {ex.Message}");
+                    LogError($"2 General error: {ex.Message}");
                 }
             });
         }
@@ -108,18 +108,18 @@ namespace TcpConnectionLibrary
                     if (bytesRead == 0)
                         break;
                     // Добавляем полученные данные в список байтов
-                    data.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
-
-
-
+                    for (int i = 0; i < bytesRead; i++)
+                    {
+                        data.Add(buffer[i]);
+                    }
                     // Если меньше данных, чем размер буфера, завершение чтения
                     if (bytesRead < buffer.Length)
                         break;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    LogError($"Receive error: {ex.Message}");
-                    break;
+                    Dispose();
+
                 }
             }
 
