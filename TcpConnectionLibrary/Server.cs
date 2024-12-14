@@ -67,9 +67,18 @@ namespace TcpConnectionLibrary
                     return;
                 }
 
+                T request = default;
                 // Десериализация запроса
-                T request = JsonConvert.DeserializeObject<T>(requestText);
-                Console.WriteLine("REQUEST: " + request);
+                try
+                {
+                    request = JsonConvert.DeserializeObject<T>(requestText);
+                    Console.WriteLine("REQUEST: " + request);
+                }
+                catch
+                {
+                    Console.WriteLine("МЫ ПРОПУСКАЕМ ЭТОТ ПАКЕТ!!!");
+                    return;
+                }
 
                 // Отправляем ответ клиенту
                 var dataText = JsonConvert.SerializeObject(obj);
