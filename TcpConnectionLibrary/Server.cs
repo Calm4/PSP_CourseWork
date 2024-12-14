@@ -109,26 +109,28 @@ namespace TcpConnectionLibrary
                 {
                     int bytesRead = _clientSocket.Receive(buffer);
                     if (bytesRead == 0)
-                        break;
+                        break;  // Соединение закрыто
 
                     for (int i = 0; i < bytesRead; i++)
                     {
                         data.Add(buffer[i]);
                     }
 
+                    // Если получено меньше данных, чем в буфере, это может означать, что клиент отправляет данные частями
                     if (bytesRead < buffer.Length)
                         break;
                 }
-                catch
+                catch (Exception ex)
                 {
+                    LogError($"Error while reading data: {ex.Message}");
                     Dispose();
+                    return string.Empty;
                 }
             }
 
             string rawData = Encoding.UTF8.GetString(data.ToArray());
 
-            // Теперь используется строка в методе Split
-            // Проверка на валидный JSON и обработка строки
+            // Проверяем, является ли строка валидным JSON
             if (string.IsNullOrWhiteSpace(rawData) || !IsValidJson(rawData))
             {
                 LogError("Invalid or empty JSON received.");
@@ -137,6 +139,7 @@ namespace TcpConnectionLibrary
 
             return rawData;
         }
+
 
         private bool IsValidJson(string str)
         {
