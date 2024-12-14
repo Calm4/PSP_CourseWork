@@ -51,6 +51,7 @@ namespace TcpConnectionLibrary
                 await Task.Run(() =>
                 {
                     ClientSocket.Send(requestData);
+
                 });
 
                 byte[] buffer = new byte[1024];
@@ -75,15 +76,22 @@ namespace TcpConnectionLibrary
             }
         }
 
+
+
         public async Task UpdateNetworkData<T>(T obj)
         {
             var json = JsonConvert.SerializeObject(obj);
+
+
+
             var data = Encoding.UTF8.GetBytes(json);
 
             // Отправка данных серверу
             await Task.Run(() =>
+
             {
                 ClientSocket.Send(data);
+
             });
 
             // Получение ответа от сервера

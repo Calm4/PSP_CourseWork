@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -23,6 +24,7 @@ namespace TcpConnectionLibrary
             var ipAddress = new IPEndPoint(IPAddress.Any, _port);
             ServerSocket.Bind(ipAddress);
 
+            // Получение локального адреса, к которому привязан сервер
             var localEndPoint = ServerSocket.LocalEndPoint as IPEndPoint;
             if (localEndPoint != null)
             {
@@ -32,11 +34,13 @@ namespace TcpConnectionLibrary
             ServerSocket.Listen(10);
         }
 
+
         public async Task Start()
         {
             Console.WriteLine("Waiting for a connection...");
             _clientSocket = await Task.Run(() => ServerSocket.Accept());
 
+            // Получение локального IP-адреса и порта
             var localEndPoint = _clientSocket.LocalEndPoint as IPEndPoint;
             var remoteEndPoint = _clientSocket.RemoteEndPoint as IPEndPoint;
 
@@ -50,21 +54,44 @@ namespace TcpConnectionLibrary
             }
         }
 
+
         public async Task UpdateNetworkData<T>(T obj)
         {
             await Task.Run(() =>
             {
-                // Читаем данные в цикле
-                var requestText = ReadDataFromClient();
-                Console.WriteLine("REQUEST TEXT:" + requestText);
+                try
+                {
+                    // Читаем данные в цикле
+                    var requestText = ReadDataFromClient();
+                    Console.WriteLine("REQUEST TEXT:" + requestText);
 
-                T request = JsonConvert.DeserializeObject<T>(requestText);
+                    // Проверяем JSON перед десериализацией
+                    if (string.IsNullOrWhiteSpace(requestText))
+                    {
+                        Console.WriteLine("Received empty or null data");
+                        return;
+                    }
 
-                var dataText = JsonConvert.SerializeObject(obj);
-                byte[] data = Encoding.UTF8.GetBytes(dataText);
-                _clientSocket.Send(data);
+                    // Десериализация запроса
+                    T request = JsonConvert.DeserializeObject<T>(requestText);
+                    Console.WriteLine("REQUEST: " + request);
 
-                OnGetNetworkData?.Invoke(request);
+                    // Отправляем ответ клиенту
+                    var dataText = JsonConvert.SerializeObject(obj);
+                    byte[] data = Encoding.UTF8.GetBytes(dataText);
+                    _clientSocket.Send(data);
+
+                    OnGetNetworkData?.Invoke(request);
+
+                }
+                catch (JsonException jsonEx)
+                {
+                    LogError($"JSON error: {jsonEx.Message}");
+                }
+                catch (Exception ex)
+                {
+                    LogError($"General error: {ex.Message}");
+                }
             });
         }
 
@@ -80,8 +107,12 @@ namespace TcpConnectionLibrary
                     int bytesRead = _clientSocket.Receive(buffer);
                     if (bytesRead == 0)
                         break;
+                    // Добавляем полученные данные в список байтов
                     data.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
 
+
+
+                    // Если меньше данных, чем размер буфера, завершение чтения
                     if (bytesRead < buffer.Length)
                         break;
                 }
@@ -92,26 +123,7 @@ namespace TcpConnectionLibrary
                 }
             }
 
-            string receivedString = Encoding.UTF8.GetString(data.ToArray());
-            string finalString = string.Empty;
-            bool processing = true;
-
-            foreach (char item in receivedString)
-            {
-                if (processing)
-                {
-                    if (item == '}')
-                    {
-                        finalString += item.ToString();
-                        break;
-                    }
-                    else
-                    {
-                        finalString += item.ToString();
-                    }
-                }
-            }
-            return finalString;
+            return Encoding.UTF8.GetString(data.ToArray());
         }
 
 
