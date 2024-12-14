@@ -23,7 +23,6 @@ namespace TcpConnectionLibrary
             var ipAddress = new IPEndPoint(IPAddress.Any, _port);
             ServerSocket.Bind(ipAddress);
 
-            // Получение локального адреса, к которому привязан сервер
             var localEndPoint = ServerSocket.LocalEndPoint as IPEndPoint;
             if (localEndPoint != null)
             {
@@ -38,7 +37,6 @@ namespace TcpConnectionLibrary
             Console.WriteLine("Waiting for a connection...");
             _clientSocket = await Task.Run(() => ServerSocket.Accept());
 
-            // Получение локального IP-адреса и порта
             var localEndPoint = _clientSocket.LocalEndPoint as IPEndPoint;
             var remoteEndPoint = _clientSocket.RemoteEndPoint as IPEndPoint;
 
@@ -60,27 +58,8 @@ namespace TcpConnectionLibrary
                 var requestText = ReadDataFromClient();
                 Console.WriteLine("REQUEST TEXT:" + requestText);
 
-                // Проверяем JSON перед десериализацией
-                if (string.IsNullOrWhiteSpace(requestText))
-                {
-                    Console.WriteLine("Received empty or null data");
-                    return;
-                }
+                T request = JsonConvert.DeserializeObject<T>(requestText);
 
-                T request = default;
-                // Десериализация запроса
-                try
-                {
-                    request = JsonConvert.DeserializeObject<T>(requestText);
-                    Console.WriteLine("REQUEST: " + request);
-                }
-                catch
-                {
-                    Console.WriteLine("МЫ ПРОПУСКАЕМ ЭТОТ ПАКЕТ!!!");
-                    return;
-                }
-
-                // Отправляем ответ клиенту
                 var dataText = JsonConvert.SerializeObject(obj);
                 byte[] data = Encoding.UTF8.GetBytes(dataText);
                 _clientSocket.Send(data);
@@ -101,10 +80,8 @@ namespace TcpConnectionLibrary
                     int bytesRead = _clientSocket.Receive(buffer);
                     if (bytesRead == 0)
                         break;
-                    // Добавляем полученные данные в список байтов
                     data.AddRange(new ArraySegment<byte>(buffer, 0, bytesRead));
 
-                    // Если меньше данных, чем размер буфера, завершение чтения
                     if (bytesRead < buffer.Length)
                         break;
                 }
