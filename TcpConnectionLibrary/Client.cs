@@ -54,7 +54,7 @@ namespace TcpConnectionLibrary
                     //Console.WriteLine($"Request sent to server: {requestJson}");
                 });
 
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[65535];
                 int bytesReceived = await Task.Run(() => ClientSocket.Receive(buffer));
 
                 if (bytesReceived == 0)
@@ -92,7 +92,7 @@ namespace TcpConnectionLibrary
             {
                 try
                 {
-                    var buffer = new byte[1024];
+                    var buffer = new byte[65535];
                     int bytesReceived = await Task.Run(() => ClientSocket.Receive(buffer));
                     var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
                     var result = JsonConvert.DeserializeObject<T>(resultText);

@@ -87,7 +87,7 @@ namespace TcpConnectionLibrary
 
         private string ReadDataFromClient()
         {
-            var buffer = new byte[1024];
+            var buffer = new byte[65535];
             var data = new List<byte>();
 
             while (true)
