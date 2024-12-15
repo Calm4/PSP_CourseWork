@@ -89,43 +89,27 @@ namespace TcpConnectionLibrary
         private string ReadDataFromClient()
         {
             var buffer = new byte[65535];
-            var data = new List<byte>();
+            int bytesRead = _clientSocket.Receive(buffer);
 
-            while (true)
-            {
-                try
-                {
-                    int bytesRead = _clientSocket.Receive(buffer);
-                    if (bytesRead == 0)
-                        break;
-
-                    for (int i = 0; i < bytesRead; i++)
-                    {
-                        data.Add(buffer[i]);
-                    }
-
-                    if (bytesRead < buffer.Length)
-                        break;
-                }
-                catch (Exception ex)
-                {
-                    LogError($"Error while reading data: {ex.Message}");
-                    Dispose();
-                    return string.Empty;
-                }
-            }
-
-            string rawData = Encoding.UTF8.GetString(data.ToArray());
-
-            // Проверяем, является ли строка валидным JSON
-            if (string.IsNullOrWhiteSpace(rawData) || !IsValidJson(rawData))
-            {
-                LogError($"Invalid or empty JSON received: {rawData}");
+            if (bytesRead == 0)
                 return string.Empty;
+
+            string rawData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+
+            // Разделить данные на отдельные JSON-объекты
+            var jsonMessages = rawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var jsonMessage in jsonMessages)
+            {
+                if (IsValidJson(jsonMessage))
+                {
+                    return jsonMessage; // Возвращаем первый валидный JSON
+                }
             }
 
-            return rawData;
+            return string.Empty;
         }
+
 
 
         private bool IsValidJson(string str)
