@@ -95,23 +95,19 @@ namespace TcpConnectionLibrary
 
             string rawData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-            // Проверяем длину и извлекаем JSON
-            var separatorIndex = rawData.IndexOf('|');
-            if (separatorIndex > 0)
-            {
-                int length = int.Parse(rawData.Substring(0, separatorIndex));
-                string json = rawData.Substring(separatorIndex + 1);
+            // Разделить данные на отдельные JSON-объекты
+            var jsonMessages = rawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (json.Length >= length && IsValidJson(json))
+            foreach (var jsonMessage in jsonMessages)
+            {
+                if (IsValidJson(jsonMessage))
                 {
-                    return json.Substring(0, length);
+                    return jsonMessage; // Возвращаем первый валидный JSON
                 }
             }
 
-            LogError("Invalid message format");
             return string.Empty;
         }
-
 
 
 
