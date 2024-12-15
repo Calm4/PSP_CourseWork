@@ -120,7 +120,7 @@ namespace TcpConnectionLibrary
             // Проверяем, является ли строка валидным JSON
             if (string.IsNullOrWhiteSpace(rawData) || !IsValidJson(rawData))
             {
-                LogError("Invalid or empty JSON received.");
+                LogError($"Invalid or empty JSON received: {rawData}");
                 return string.Empty;
             }
 

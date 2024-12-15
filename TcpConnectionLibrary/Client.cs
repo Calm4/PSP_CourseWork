@@ -74,8 +74,12 @@ namespace TcpConnectionLibrary
             }
         }
 
+        private bool isSending;
+
         public async Task UpdateNetworkData<T>(T obj)
         {
+            if (isSending) return;
+
             var json = JsonConvert.SerializeObject(obj);
 
             //Console.WriteLine($"Sending JSON data: {json}");
@@ -83,9 +87,10 @@ namespace TcpConnectionLibrary
             var data = Encoding.UTF8.GetBytes(json);
 
             await Task.Run(() =>
-
             {
+                isSending = true;
                 ClientSocket.Send(data);
+                isSending = false;
             });
 
             if (ClientSocket != null && ClientSocket.Connected)
