@@ -25,12 +25,6 @@ namespace TcpConnectionLibrary
             var ipAddress = new IPEndPoint(IPAddress.Any, _port);
             ServerSocket.Bind(ipAddress);
 
-            // Получение локального адреса, к которому привязан сервер
-            var localEndPoint = ServerSocket.LocalEndPoint as IPEndPoint;
-            if (localEndPoint != null)
-            {
-                Console.WriteLine($"Server started on IP: {localEndPoint.Address}, Port: {localEndPoint.Port}");
-            }
 
             ServerSocket.Listen(10);
         }
@@ -41,17 +35,16 @@ namespace TcpConnectionLibrary
             Console.WriteLine("Waiting for a connection...");
             _clientSocket = await Task.Run(() => ServerSocket.Accept());
 
-            // Получение локального IP-адреса и порта
             var localEndPoint = _clientSocket.LocalEndPoint as IPEndPoint;
             var remoteEndPoint = _clientSocket.RemoteEndPoint as IPEndPoint;
 
             if (localEndPoint != null)
             {
-                Console.WriteLine($"Server is bound to IP: {localEndPoint.Address}, Port: {localEndPoint.Port}");
+                Console.WriteLine($"Server IP: {localEndPoint.Address}, Port: {localEndPoint.Port}");
             }
             if (remoteEndPoint != null)
             {
-                Console.WriteLine($"Client connected from IP: {remoteEndPoint.Address}, Port: {remoteEndPoint.Port}");
+                Console.WriteLine($"Client IP: {remoteEndPoint.Address}, Port: {remoteEndPoint.Port}");
             }
         }
 
@@ -62,33 +55,32 @@ namespace TcpConnectionLibrary
             {
                 try
                 {
-                    // Читаем данные в цикле
                     var requestTexts = ReadDataFromClient();
 
-                   
-                        if (string.IsNullOrWhiteSpace(requestTexts))
-                        {
-                            Console.WriteLine("Received empty or null data");
-                            return;
-                        }
 
-                        try
-                        {
-                            var request = JsonConvert.DeserializeObject<T>(requestTexts);
-                            Console.WriteLine("REQUEST: " + request);
+                    if (string.IsNullOrWhiteSpace(requestTexts))
+                    {
+                        Console.WriteLine("Received empty or null data");
+                        return;
+                    }
 
-                            // Отправляем ответ клиенту
-                            var dataText = JsonConvert.SerializeObject(obj);
-                            byte[] data = Encoding.UTF8.GetBytes(dataText);
-                            _clientSocket.Send(data);
+                    try
+                    {
+                        var request = JsonConvert.DeserializeObject<T>(requestTexts);
 
-                            OnGetNetworkData?.Invoke(request);
-                        }
-                        catch (JsonException jsonEx)
-                        {
-                            LogError($"1 JSON error: {jsonEx.Message}");
-                        }
-                    
+                        Console.WriteLine("Request TEXT:" + requestTexts);
+
+                        var dataText = JsonConvert.SerializeObject(obj);
+                        byte[] data = Encoding.UTF8.GetBytes(dataText);
+                        _clientSocket.Send(data);
+
+                        OnGetNetworkData?.Invoke(request);
+                    }
+                    catch (JsonException jsonEx)
+                    {
+                        LogError($"1 JSON error: {jsonEx.Message}");
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -109,14 +101,13 @@ namespace TcpConnectionLibrary
                 {
                     int bytesRead = _clientSocket.Receive(buffer);
                     if (bytesRead == 0)
-                        break;  // Соединение закрыто
+                        break;
 
                     for (int i = 0; i < bytesRead; i++)
                     {
                         data.Add(buffer[i]);
                     }
 
-                    // Если получено меньше данных, чем в буфере, это может означать, что клиент отправляет данные частями
                     if (bytesRead < buffer.Length)
                         break;
                 }
