@@ -77,13 +77,11 @@ namespace DirigibleBattle.Managers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace((string)obj))
-                {
-                    return;
-                }
-
 
                 NetworkData networkData = (NetworkData)obj;
+
+                if (networkData is null)
+                    return;
 
                 // Обновляем данные для сетевого игрока
                 NetworkPlayer.PositionCenter = new Vector2(networkData.PositionX, networkData.PositionY);
