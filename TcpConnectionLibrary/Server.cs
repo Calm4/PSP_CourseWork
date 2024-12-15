@@ -56,6 +56,7 @@ namespace TcpConnectionLibrary
                     if (string.IsNullOrWhiteSpace(requestTexts))
                     {
                         Console.WriteLine("Received empty or null data");
+                        OnGetNetworkData?.Invoke(requestTexts);
                         return;
                     }
 

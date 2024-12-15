@@ -77,6 +77,12 @@ namespace DirigibleBattle.Managers
         {
             try
             {
+                if (string.IsNullOrWhiteSpace((string)obj))
+                {
+                    return;
+                }
+
+
                 NetworkData networkData = (NetworkData)obj;
 
                 // Обновляем данные для сетевого игрока
