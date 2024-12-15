@@ -76,14 +76,12 @@ namespace TcpConnectionLibrary
 
         public async Task UpdateNetworkData<T>(T obj)
         {
-            var json = JsonConvert.SerializeObject(obj);
-
-            //Console.WriteLine($"Sending JSON data: {json}");
-
-            var data = Encoding.UTF8.GetBytes(json);
 
             await Task.Run(() =>
             {
+                string json = JsonConvert.SerializeObject(obj);
+                string message = json.Length + "|" + json; // Добавляем длину и разделитель
+                byte[] data = Encoding.UTF8.GetBytes(message);
                 ClientSocket.Send(data);
             });
 
