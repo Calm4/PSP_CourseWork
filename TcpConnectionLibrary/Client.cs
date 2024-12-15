@@ -11,14 +11,14 @@ namespace TcpConnectionLibrary
         public event Action<object> OnGetNetworkData;
 
         public Socket ClientSocket { get; private set; }
-        private string _address;
+        private string _serverIP;
         private int _port;
 
-        public Client(string ipAddress, int port = 8000)
+        public Client(string serverIP, int port = 8000)
         {
             ClientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _address = ipAddress;
-            Console.WriteLine("ipAddres: " + _address);
+            _serverIP = serverIP;
+            Console.WriteLine("Connected to IP: " + _serverIP);
             _port = port;
         }
 
@@ -28,7 +28,7 @@ namespace TcpConnectionLibrary
             {
                 await Task.Run(() =>
                 {
-                    ClientSocket.Connect(_address, _port);
+                    ClientSocket.Connect(_serverIP, _port);
                     Console.WriteLine("Connected to server");
                 });
             }
@@ -64,8 +64,6 @@ namespace TcpConnectionLibrary
                 }
 
                 var resultText = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-                //Console.WriteLine($"Received data: {resultText}");
-
 
                 var result = JsonConvert.DeserializeObject<T>(resultText);
                 OnGetNetworkData?.Invoke(result);
@@ -76,8 +74,6 @@ namespace TcpConnectionLibrary
             }
         }
 
-
-
         public async Task UpdateNetworkData<T>(T obj)
         {
             var json = JsonConvert.SerializeObject(obj);
@@ -86,15 +82,12 @@ namespace TcpConnectionLibrary
 
             var data = Encoding.UTF8.GetBytes(json);
 
-            // Отправка данных серверу
             await Task.Run(() =>
 
             {
                 ClientSocket.Send(data);
-                //Console.WriteLine("Data sent to server");
             });
 
-            // Получение ответа от сервера
             if (ClientSocket != null && ClientSocket.Connected)
             {
                 try
@@ -123,7 +116,6 @@ namespace TcpConnectionLibrary
             ClientSocket.Close();
             ClientSocket.Dispose();
         }
-
         public void UnsubscribeActions()
         {
             OnGetNetworkData = null;

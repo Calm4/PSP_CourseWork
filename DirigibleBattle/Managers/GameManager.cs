@@ -43,25 +43,21 @@ namespace DirigibleBattle.Managers
             SetupGameObjects();
         }
 
-        
 
-        public async void GameTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
+
+        public void GameTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
         {
-            // Проверка состояния игры
             _uiManager.GameStateCheck(_mainWindow);
 
-            // Обработка повреждений игроков
             _playerManager.CheckPlayerDamage(networkManager._firstPlayerBulletList, ref SecondPlayer);
             _playerManager.CheckPlayerDamage(networkManager._secondPlayerBulletList, ref FirstPlayer);
 
-            // Применение призов
             _prizeManager.ApplyPrize(PrizeList, ref FirstPlayer);
             _prizeManager.ApplyPrize(PrizeList, ref SecondPlayer);
 
             _playerManager.PlayerShoot();
             _uiManager.UpdatePlayerStats();
 
-            // Управление движением игроков
             networkManager.CurrentPlayer.Idle();
 
             if (networkManager.CurrentPlayer == FirstPlayer)
@@ -79,7 +75,6 @@ namespace DirigibleBattle.Managers
 
         }
 
-        
 
         private void GameSettings(GLWpfControl glControl)
         {
@@ -90,7 +85,6 @@ namespace DirigibleBattle.Managers
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
-
         private void SetupGameObjects()
         {
             FirstPlayer = new BasicDirigible(new Vector2(-0.6f, -0.4f), TextureManager.firstDirigibleTextureRight);
@@ -98,7 +92,6 @@ namespace DirigibleBattle.Managers
 
             PrizeList = new List<Prize>();
         }
-
         public Bullet CreateNewAmmo(BulletData bulletData)
         {
             Bullet bullet = null;
@@ -120,7 +113,6 @@ namespace DirigibleBattle.Managers
 
 
             return bullet;
-        }
-        
+        } 
     }
 }
