@@ -41,15 +41,15 @@ namespace DirigibleBattle.Managers
         {
             Console.WriteLine("Initializing timers...");
 
-            gameTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+            gameTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
             gameTimer.Tick += (sender, e) => _gameManager.GameTimer_Tick(networkManager, sender, e);
             Console.WriteLine("Game timer initialized");
 
-            prizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+            prizeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
             prizeTimer.Tick += _prizeManager.PrizeTimer_Tick;
             Console.WriteLine("Prize timer initialized");
 
-            windTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) };
+            windTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
             windTimer.Tick += WindTimer_Tick;
             Console.WriteLine("Wind timer initialized");
 

@@ -73,7 +73,7 @@ namespace TcpConnectionLibrary
                     }
                     catch (JsonException jsonEx)
                     {
-                        LogError($"1 JSON error: {jsonEx.Message}");
+                        LogError($"1 JSON error: {jsonEx.Message} + ({requestTexts})");
                     }
 
                 }
@@ -143,7 +143,7 @@ namespace TcpConnectionLibrary
         private void LogError(string message)
         {
             Console.BackgroundColor = ConsoleColor.Red;
-            Console.WriteLine("ERROR: " + message);
+            Console.WriteLine(message);
             Console.ResetColor();
         }
 
