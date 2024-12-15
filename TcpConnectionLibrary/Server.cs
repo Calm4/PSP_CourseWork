@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -47,11 +48,11 @@ namespace TcpConnectionLibrary
 
         public async Task UpdateNetworkData<T>(T obj)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 try
                 {
-                    var requestTexts = ReadDataFromClient();
+                    var requestTexts = await ReadDataFromClient();
 
                     if (string.IsNullOrWhiteSpace(requestTexts))
                     {
@@ -85,29 +86,22 @@ namespace TcpConnectionLibrary
         }
 
 
-        private string ReadDataFromClient()
+        private async Task<string> ReadDataFromClient()
         {
-            var buffer = new byte[65535];
-            int bytesRead = _clientSocket.Receive(buffer);
-
-            if (bytesRead == 0)
-                return string.Empty;
-
-            string rawData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-            // Разделить данные на отдельные JSON-объекты
-            var jsonMessages = rawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var jsonMessage in jsonMessages)
+            var stream = new NetworkStream(_clientSocket);
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
-                if (IsValidJson(jsonMessage))
+                while (true)
                 {
-                    return jsonMessage; // Возвращаем первый валидный JSON
+                    string line = await reader.ReadLineAsync();
+                    if (IsValidJson(line))
+                    {
+                        return line;
+                    }
                 }
             }
-
-            return string.Empty;
         }
+
 
 
 
