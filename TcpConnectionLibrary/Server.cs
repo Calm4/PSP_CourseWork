@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,17 +14,15 @@ namespace TcpConnectionLibrary
 
         public Socket ServerSocket { get; private set; }
         private Socket _clientSocket;
-        private int _port;
 
         public Server(int port = 8000)
         {
-            _port = port;
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var ipAddress = new IPEndPoint(IPAddress.Any, _port);
+            var ipAddress = new IPEndPoint(IPAddress.Any, port);
+            
             ServerSocket.Bind(ipAddress);
 
-
-            ServerSocket.Listen(10);
+            ServerSocket.Listen(1);
         }
 
 
@@ -56,7 +52,6 @@ namespace TcpConnectionLibrary
                 try
                 {
                     var requestTexts = ReadDataFromClient();
-
 
                     if (string.IsNullOrWhiteSpace(requestTexts))
                     {
