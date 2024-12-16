@@ -43,10 +43,15 @@ namespace DirigibleBattle.Managers
             SetupGameObjects();
         }
 
+        private bool UpdateResult = true;
 
-
-        public void GameTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
+        public async void GameTimer_Tick(NetworkManager networkManager, object sender, EventArgs e)
         {
+            if (!UpdateResult)
+            {
+                return;
+            }
+            UpdateResult = false;
             _uiManager.GameStateCheck(_mainWindow);
 
             _playerManager.CheckPlayerDamage(networkManager._firstPlayerBulletList, ref SecondPlayer);
@@ -71,8 +76,8 @@ namespace DirigibleBattle.Managers
                 _playerManager.UpdatePlayerTexture();
             }
 
-            _ = networkManager.UpdateNetworkData();
-
+            await networkManager.UpdateNetworkData();
+            UpdateResult = true;
         }
 
 

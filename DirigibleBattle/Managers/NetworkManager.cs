@@ -140,6 +140,7 @@ namespace DirigibleBattle.Managers
             }
         }
 
+        
 
         public async Task UpdateNetworkData()
         {
