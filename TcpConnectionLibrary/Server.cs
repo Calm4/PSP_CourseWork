@@ -11,7 +11,7 @@ namespace TcpConnectionLibrary
     public class Server : ITcpNetworkConnection, IDisposable
     {
         public event Action<object> OnGetNetworkData;
-        public event Action<string> ConnectionLost;
+
         public Socket ServerSocket { get; private set; }
         private Socket _clientSocket;
 
@@ -128,15 +128,6 @@ namespace TcpConnectionLibrary
             Console.BackgroundColor = ConsoleColor.Red;
             Console.WriteLine(message);
             Console.ResetColor();
-        }
-
-        public void CheckConnection()
-        {
-            if (_clientSocket == null || !_clientSocket.Connected)
-            {
-                ConnectionLost?.Invoke("Соединение с клиентом разорвано."); // Вызываем событие
-                Dispose();
-            }
         }
 
         public void Dispose()

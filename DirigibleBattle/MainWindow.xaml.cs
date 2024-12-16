@@ -32,7 +32,6 @@ namespace DirigibleBattle
             _timeManager = new TimeManager(_gameManager, _prizeManager, _windManager);
 
             _networkManager = new NetworkManager(_gameManager, _uiManager, _timeManager, _playerManager);
-            _networkManager.ConnectionLost += OnConnectionLost;
             _playerManager.SetManagers(_networkManager, _gameManager);
             _prizeManager.SetManagers(_networkManager, _gameManager);
             _windManager.SetManagers(_networkManager, _gameManager);
@@ -41,11 +40,6 @@ namespace DirigibleBattle
 
             _uiManager.DisplayLocalIPAddress(IpAddressLabel, IpAddressInput);
 
-        }
-
-        private void OnConnectionLost(string message)
-        {
-            MessageBox.Show(message, "Ошибка соединения", MessageBoxButton.OK);
         }
 
         private void ServerButton_Click(object sender, RoutedEventArgs e)
