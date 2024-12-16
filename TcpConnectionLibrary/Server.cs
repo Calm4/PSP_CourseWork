@@ -55,47 +55,49 @@ namespace TcpConnectionLibrary
 
         public async Task UpdateNetworkData<T>(T obj)
         {
-            await Task.Run(() =>
+            try
             {
+                var requestTexts = ReadDataFromClient();
+
+                if (string.IsNullOrWhiteSpace(requestTexts))
+                {
+                    Console.WriteLine("Received empty or null data: ");
+                    return;
+                }
+
                 try
                 {
-                    var requestTexts = ReadDataFromClient();
+                    var request = JsonConvert.DeserializeObject<T>(requestTexts);
+                    OnGetNetworkData?.Invoke(request);
 
-                    if (string.IsNullOrWhiteSpace(requestTexts))
+                    Console.WriteLine("Request TEXT:" + requestTexts);
+
+                    var dataText = JsonConvert.SerializeObject(obj);
+                    byte[] data = Encoding.UTF8.GetBytes(dataText);
+
+                    await Task.Run(() =>
                     {
-                        Console.WriteLine("Received empty or null data");
-                        return;
-                    }
-
-                    try
-                    {
-                        var request = JsonConvert.DeserializeObject<T>(requestTexts);
-
-                        Console.WriteLine("Request TEXT:" + requestTexts);
-
-                        var dataText = JsonConvert.SerializeObject(obj);
-                        byte[] data = Encoding.UTF8.GetBytes(dataText);
                         _clientSocket.Send(data);
-
-                        OnGetNetworkData?.Invoke(request);
-                    }
-                    catch (JsonException jsonEx)
-                    {
-                        LogError($"JSON error: {jsonEx.Message} + ({requestTexts})");
-                    }
+                    });
 
                 }
-                catch (Exception ex)
+                catch (JsonException jsonEx)
                 {
-                    if (isConnected)
-                    {
-                        OnConnectionLost?.Invoke("Потеряно соединение с клиентом");
-                        Dispose();
-                        LogError($"General error: {ex.Message}");
-                        isConnected = false;
-                    }
+                    LogError($"JSON error: {jsonEx.Message} + JSON text: ({requestTexts})");
                 }
-            });
+
+            }
+            catch (Exception ex)
+            {
+                if (isConnected)
+                {
+                    OnConnectionLost?.Invoke("Потеряно соединение с клиентом");
+                    Dispose();
+                    LogError($"General error: {ex.Message}");
+                    isConnected = false;
+                }
+            }
+
         }
 
 
