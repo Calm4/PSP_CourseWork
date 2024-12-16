@@ -73,13 +73,13 @@ namespace TcpConnectionLibrary
                     }
                     catch (JsonException jsonEx)
                     {
-                        LogError($"1 JSON error: {jsonEx.Message} + ({requestTexts})");
+                        LogError($"JSON error: {jsonEx.Message} + ({requestTexts})");
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    LogError($"2 General error: {ex.Message}");
+                    LogError($"General error: {ex.Message}");
                 }
             });
         }
@@ -95,14 +95,13 @@ namespace TcpConnectionLibrary
 
             string rawData = Encoding.UTF8.GetString(buffer, 0, bytesRead);
 
-            // Разделить данные на отдельные JSON-объекты
             var jsonMessages = rawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var jsonMessage in jsonMessages)
             {
                 if (IsValidJson(jsonMessage))
                 {
-                    return jsonMessage; // Возвращаем первый валидный JSON
+                    return jsonMessage;
                 }
             }
 
