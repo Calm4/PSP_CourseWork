@@ -11,6 +11,9 @@ namespace TcpConnectionLibrary
     public class Server : ITcpNetworkConnection, IDisposable
     {
         public event Action<object> OnGetNetworkData;
+        public event Action<string> OnConnectionLost;
+
+        private bool isConnected;
 
         public Socket ServerSocket { get; private set; }
         private Socket _clientSocket;
@@ -19,7 +22,7 @@ namespace TcpConnectionLibrary
         {
             ServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             var ipAddress = new IPEndPoint(IPAddress.Any, port);
-            
+
             ServerSocket.Bind(ipAddress);
 
             ServerSocket.Listen(1);
@@ -30,6 +33,11 @@ namespace TcpConnectionLibrary
         {
             Console.WriteLine("Waiting for a connection...");
             _clientSocket = await Task.Run(() => ServerSocket.Accept());
+
+            if (_clientSocket != null)
+            {
+                isConnected = true;
+            }
 
             var localEndPoint = _clientSocket.LocalEndPoint as IPEndPoint;
             var remoteEndPoint = _clientSocket.RemoteEndPoint as IPEndPoint;
@@ -79,7 +87,13 @@ namespace TcpConnectionLibrary
                 }
                 catch (Exception ex)
                 {
-                    LogError($"General error: {ex.Message}");
+                    if (isConnected)
+                    {
+                        OnConnectionLost?.Invoke("Потеряно соединение с клиентом");
+                        Dispose();
+                        LogError($"General error: {ex.Message}");
+                        isConnected = false;
+                    }
                 }
             });
         }

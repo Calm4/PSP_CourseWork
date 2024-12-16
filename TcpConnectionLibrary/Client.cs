@@ -9,6 +9,7 @@ namespace TcpConnectionLibrary
     public class Client : ITcpNetworkConnection, IDisposable
     {
         public event Action<object> OnGetNetworkData;
+        public event Action<string> OnConnectionLost;
 
         public Socket ClientSocket { get; private set; }
         private string _serverIP;
@@ -100,13 +101,24 @@ namespace TcpConnectionLibrary
                 }
                 catch (SocketException ex)
                 {
+                    OnConnectionLost?.Invoke("Потеряно соединение с сервером");
                     Console.WriteLine($"Socket error: {ex.Message}");
                 }
             }
             else
             {
-                Dispose();
+                OnConnectionLost?.Invoke("Потеряно соединение с сервером");
                 Console.WriteLine("Socket is not connected or is null.");
+            }
+        }
+
+        public void CheckConnection()
+        {
+            if (ClientSocket == null || !ClientSocket.Connected)
+            {
+                Console.WriteLine("1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111");
+                OnConnectionLost?.Invoke("Соединение с клиентом разорвано."); // Вызываем событие
+                Dispose();
             }
         }
 

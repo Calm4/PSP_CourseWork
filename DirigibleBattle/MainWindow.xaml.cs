@@ -32,6 +32,7 @@ namespace DirigibleBattle
             _timeManager = new TimeManager(_gameManager, _prizeManager, _windManager);
 
             _networkManager = new NetworkManager(_gameManager, _uiManager, _timeManager, _playerManager);
+            _networkManager.OnNetworkConnectionLost += OnNetworkConnectionLost;
             _playerManager.SetManagers(_networkManager, _gameManager);
             _prizeManager.SetManagers(_networkManager, _gameManager);
             _windManager.SetManagers(_networkManager, _gameManager);
@@ -41,6 +42,24 @@ namespace DirigibleBattle
             _uiManager.DisplayLocalIPAddress(IpAddressLabel, IpAddressInput);
 
         }
+
+        private void OnNetworkConnectionLost(string message)
+        {
+            if (Application.Current != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    this.Close();
+                    MessageBox.Show(message, "meSSAge", MessageBoxButton.OK);
+                });
+            }
+            else
+            {
+                Console.WriteLine("Application.Current is null. Cannot use Dispatcher.");
+            }
+        }
+
+
 
         private void ServerButton_Click(object sender, RoutedEventArgs e)
         {
