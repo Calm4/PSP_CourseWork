@@ -42,6 +42,8 @@ namespace DirigibleBattle.Managers
 
         private Random random;
 
+        public event Action<string> ConnectionLost;
+
         public NetworkManager(GameManager gameManager, UIManager uiManager, TimeManager timeManager, PlayerManager playerManager)
         {
             _gameManager = gameManager;
@@ -168,6 +170,7 @@ namespace DirigibleBattle.Managers
             int seed = new Random().Next();
 
             Server.OnGetNetworkData += (_) => StartGame(seed, Server, true);
+            Server.ConnectionLost += message => ConnectionLost?.Invoke(message);
 
             await Server.Start();
             Console.WriteLine("Server started. Client connected.");
@@ -183,6 +186,7 @@ namespace DirigibleBattle.Managers
                 Console.WriteLine("Event OnGetData triggered");
                 StartGame((int)obj, Client, false);
             };
+            Client.ConnectionLost += message => ConnectionLost?.Invoke(message);
 
             await Client.Connect();
             Console.WriteLine("Client connected successfully.");
